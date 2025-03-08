@@ -12,7 +12,7 @@ import Loading from "./Components/Loading.jsx";
 //import Rust
 import * as Rust from "../../wasm_pkg/RUST.js"
 
-
+// Set no of rows and columns that would fit the screen
 const Columns = Math.floor(window.innerWidth / Constants.nodeWidth);
 const Rows = Math.floor(window.innerHeight / Constants.nodeHeight);
 
@@ -31,10 +31,11 @@ export default function PathVisualizer() {
         initialize();
     }, []);
 
-    let walls = [];
-
-    function wallCell(idx) {
-        walls.push(idx);
+    // flag 1 means set state 1 flag 0 means set state 0
+    function setWall(idx,flag) {
+        if (!cellState || idx >= Rows * Columns) {return}
+        cellState[idx] = flag;
+        Rust.show_buffer();
     }
 
     // get random indexes for start and end
@@ -57,7 +58,7 @@ export default function PathVisualizer() {
                 let cell = <Node
                     key={currentCellIdx.toString()}
                     idx={currentCellIdx}
-                    wallCell={wallCell}
+                    setWall={setWall}
                     stateValue={stateValue}
                     isStart={currentCellIdx === start}
                     isEnd={currentCellIdx === end}
@@ -90,7 +91,8 @@ const StyledDiv = styled.div`
     .NavContainer{
         display: flex;
         position: absolute;
-        width: 100%;
+        left: 35%;
+        width: auto;
         height: 5vh;
         justify-content: center;
         align-items: center;

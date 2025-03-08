@@ -1,4 +1,5 @@
 mod utils;
+mod dijkstra;
 
 use wasm_bindgen::prelude::*;
 use web_sys::console;
@@ -118,3 +119,4 @@ pub fn show_buffer(){
     let s:String = v.iter().map(|i| i.to_string()).collect();
     console::log_1(&s.into());
 }
+

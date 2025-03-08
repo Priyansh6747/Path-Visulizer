@@ -27,8 +27,13 @@ export default function Node(props) {
     }, [state]);
 
     function MakeWall(){
-        props.wallCell(props.idx);
-        setState(1);
+        if (state === 1 ) {
+            props.setWall(props.idx , 0);
+            setState(0)
+        }else if (!props.isStart && !props.isEnd){
+            props.setWall(props.idx , 1);
+            setState(1)
+        }
     }
 
     return (
@@ -36,7 +41,7 @@ export default function Node(props) {
             <div
                 className="box"
                 style={{ backgroundColor: color }}
-                onClick={() => setState((state === 1) ? 0 : 1)}
+                onClick={() => MakeWall()}
             >
                 {props.isEnd && <span className="node-symbol end-symbol">X</span>}
                 {props.isStart && <span className="node-symbol start-symbol">S</span>}
@@ -48,7 +53,7 @@ export default function Node(props) {
 Node.propTypes = {
     idx: PropTypes.number,
     stateValue: PropTypes.number.isRequired,
-    wallCell: PropTypes.func.isRequired,
+    setWall: PropTypes.func.isRequired,
     isEnd: PropTypes.bool.isRequired,
     isStart: PropTypes.bool.isRequired,
 };
