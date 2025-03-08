@@ -1,4 +1,5 @@
 ﻿import init from "../wasm_pkg/RUST.js"
+
 export function getTwoUniqueRandomNumbers(max) {
     const num1 = Math.floor(Math.random() * max);
     let num2;

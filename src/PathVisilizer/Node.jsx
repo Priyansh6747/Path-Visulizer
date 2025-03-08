@@ -3,43 +3,6 @@ import PropTypes from 'prop-types';
 import Constants from './constants.js';
 import { useEffect, useState } from "react";
 
-const StyledWrapper = styled.div`
-    .box {
-        height: ${Constants.nodeHeight}px;
-        width: ${Constants.nodeWidth}px;
-        border: 1px solid black;
-        padding: 0;
-        margin: 0;
-        box-sizing: border-box;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-    }
-
-    .box:hover {
-        transform: scale(0.8);
-    }
-
-    .node-symbol {
-        font-weight: bold;
-        font-size: 1.2em;
-        position: absolute;
-        color: black;
-        text-shadow: 1px 1px 1px white, -1px -1px 1px white, 1px -1px 1px white, -1px 1px 1px white;
-    }
-
-    .end-symbol {
-        color: #e74c3c;
-        font-weight: bolder;
-    }
-
-    .start-symbol {
-        color: #c1dc0f;
-        font-weight: bolder;
-    }
-`;
-
 export default function Node(props) {
     const [state, setState] = useState(props.stateValue);
     const [color, setColor] = useState('transparent');
@@ -89,3 +52,40 @@ Node.propTypes = {
     isEnd: PropTypes.bool.isRequired,
     isStart: PropTypes.bool.isRequired,
 };
+
+const StyledWrapper = styled.div`
+    .box {
+        height: ${Constants.nodeHeight}px;
+        width: ${Constants.nodeWidth}px;
+        border: 1px solid black;
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .box:hover {
+        transform: scale(0.8);
+    }
+
+    .node-symbol {
+        font-weight: bold;
+        font-size: 1.2em;
+        position: absolute;
+        color: black;
+        text-shadow: 1px 1px 1px white, -1px -1px 1px white, 1px -1px 1px white, -1px 1px 1px white;
+    }
+
+    .end-symbol {
+        color: #e74c3c;
+        font-weight: bolder;
+    }
+
+    .start-symbol {
+        color: #c1dc0f;
+        font-weight: bolder;
+    }
+`;
