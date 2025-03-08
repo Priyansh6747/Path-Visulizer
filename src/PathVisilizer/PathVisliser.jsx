@@ -5,13 +5,18 @@ import Nav from "./Components/Navbar.jsx";
 import {getTwoUniqueRandomNumbers , startRust} from "../HelperFunctions.js";
 import {useState} from "react";
 
-import {temp} from "../../wasm_pkg/RUST.js"
+import * as Rust from "../../wasm_pkg/RUST.js"
 const Columns = Math.floor(window.innerWidth / Constants.nodeWidth);
 const Rows = Math.floor(window.innerHeight / Constants.nodeHeight);
 
 export default function PathVisualizer() {
-    let cells = [];
+    let cellState;
+    startRust().then(()=>{
+        cellState = Rust.create_cell_state_buffer(Rows * Columns -1)
+        Rust.show_buffer();
+    });
     let walls = [];
+
 
     function wallCell(idx){
         walls.push(idx);
@@ -26,10 +31,11 @@ export default function PathVisualizer() {
 
 
     const renderGrid = () => {
-        startRust().then(()=>temp());
+        let Cells = [];
         for (let i = 0; i < Rows; i++) {
             for (let j = 0; j < Columns; j++) {
                 const currentCellIdx = Columns * i +j;
+                console.log(currentCellIdx);
                     let cell = <Node
                     key={currentCellIdx.toString()}
                     idx = {currentCellIdx}
@@ -37,10 +43,11 @@ export default function PathVisualizer() {
                     stateValue={0}
                     isStart={currentCellIdx === start} isEnd={currentCellIdx === end}
                 />
-                cells.push(cell);
+                Cells.push(cell);
             }
+            console.log(Rows + " " + Columns + " " + Rows * Columns -1);
         }
-        return cells;
+        return Cells;
     };
 
 

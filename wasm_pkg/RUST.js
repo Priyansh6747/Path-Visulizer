@@ -24,15 +24,46 @@ export function greet() {
 
 /**
  * @param {number} n
- * @returns {number}
+ * @returns {Uint8Array}
  */
 export function create_cell_state_buffer(n) {
     const ret = wasm.create_cell_state_buffer(n);
-    return ret >>> 0;
+    return ret;
 }
 
 export function temp() {
     wasm.temp();
+}
+
+/**
+ * @param {number} n
+ * @returns {Uint8Array}
+ */
+export function create_shared_buffer(n) {
+    const ret = wasm.create_shared_buffer(n);
+    return ret;
+}
+
+/**
+ * @param {number} index
+ * @param {number} value
+ * @returns {boolean}
+ */
+export function modify_from_rust(index, value) {
+    const ret = wasm.modify_from_rust(index, value);
+    return ret !== 0;
+}
+
+/**
+ * @returns {Uint8Array}
+ */
+export function get_buffer_copy() {
+    const ret = wasm.get_buffer_copy();
+    return ret;
+}
+
+export function show_buffer() {
+    wasm.show_buffer();
 }
 
 async function __wbg_load(module, imports) {
@@ -72,8 +103,20 @@ function __wbg_get_imports() {
     imports.wbg.__wbg_alert_de1d4a866ee3e4c3 = function(arg0, arg1) {
         alert(getStringFromWasm0(arg0, arg1));
     };
+    imports.wbg.__wbg_buffer_609cc3eee51ed158 = function(arg0) {
+        const ret = arg0.buffer;
+        return ret;
+    };
     imports.wbg.__wbg_log_c222819a41e063d3 = function(arg0) {
         console.log(arg0);
+    };
+    imports.wbg.__wbg_new_a12002a7f91c75be = function(arg0) {
+        const ret = new Uint8Array(arg0);
+        return ret;
+    };
+    imports.wbg.__wbg_newwithbyteoffsetandlength_d97e637ebe145a9a = function(arg0, arg1, arg2) {
+        const ret = new Uint8Array(arg0, arg1 >>> 0, arg2 >>> 0);
+        return ret;
     };
     imports.wbg.__wbindgen_init_externref_table = function() {
         const table = wasm.__wbindgen_export_0;
@@ -84,6 +127,14 @@ function __wbg_get_imports() {
         table.set(offset + 2, true);
         table.set(offset + 3, false);
         ;
+    };
+    imports.wbg.__wbindgen_memory = function() {
+        const ret = wasm.memory;
+        return ret;
+    };
+    imports.wbg.__wbindgen_number_new = function(arg0) {
+        const ret = arg0;
+        return ret;
     };
     imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
         const ret = getStringFromWasm0(arg0, arg1);
