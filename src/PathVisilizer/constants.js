@@ -1,7 +1,7 @@
 ﻿
 const Constants = {
-    nodeWidth: 25,
-    nodeHeight: 25,
+    nodeWidth: 30,
+    nodeHeight: 30,
     DefaultNodeColor: "transparent",
     WallNodeColor: 'black',
     VisitedNodeColor: 'blue',

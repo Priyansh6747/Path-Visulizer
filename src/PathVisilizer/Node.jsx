@@ -16,6 +16,7 @@ const StyledWrapper = styled.div`
         align-items: center;
         position: relative;
     }
+
     .box:hover {
         transform: scale(0.8);
     }
@@ -34,7 +35,7 @@ const StyledWrapper = styled.div`
     }
 
     .start-symbol {
-        color: #2ecc71;
+        color: #c1dc0f;
         font-weight: bolder;
     }
 `;
@@ -42,8 +43,6 @@ const StyledWrapper = styled.div`
 export default function Node(props) {
     const [state, setState] = useState(props.stateValue);
     const [color, setColor] = useState('transparent');
-    const [isEnd, setEnd] = useState(props.isEnd);
-    const [isStart, setStart] = useState(props.isStart);
 
     useEffect(() => {
         switch (state) {
@@ -76,8 +75,8 @@ export default function Node(props) {
                 style={{ backgroundColor: color }}
                 onClick={() => setState((state === 1) ? 0 : 1)}
             >
-                {isEnd && <span className="node-symbol end-symbol">O</span>}
-                {isStart && <span className="node-symbol start-symbol">&#62;</span>}
+                {props.isEnd && <span className="node-symbol end-symbol">X</span>}
+                {props.isStart && <span className="node-symbol start-symbol">S</span>}
             </div>
         </StyledWrapper>
     );

@@ -2,23 +2,31 @@
 import Constants from "./constants.js";
 import Node from "./Node.jsx";
 import Nav from "./Components/Navbar.jsx";
-import {getTwoUniqueRandomNumbers} from "../HelperFunctions.js";
+import {getTwoUniqueRandomNumbers , startRust} from "../HelperFunctions.js";
 import {useState} from "react";
 
+import {temp} from "../../wasm_pkg/RUST.js"
 const Columns = Math.floor(window.innerWidth / Constants.nodeWidth);
 const Rows = Math.floor(window.innerHeight / Constants.nodeHeight);
 
 export default function PathVisualizer() {
     let cells = [];
+    let walls = [];
+
     function wallCell(idx){
-        console.log(idx);
+        walls.push(idx);
     }
+    
+
     // get random indexes for start and end
     const idxes = getTwoUniqueRandomNumbers(Rows * Columns -1);
     const [start, setStart] = useState(idxes[0]);
     const [end, setEnd] = useState(idxes[1]);
-    const renderGrid = () => {
 
+
+
+    const renderGrid = () => {
+        startRust().then(()=>temp());
         for (let i = 0; i < Rows; i++) {
             for (let j = 0; j < Columns; j++) {
                 const currentCellIdx = Columns * i +j;
@@ -35,6 +43,9 @@ export default function PathVisualizer() {
         return cells;
     };
 
+
+
+
     return (
         <>
             <StyledDiv>
@@ -45,6 +56,9 @@ export default function PathVisualizer() {
             </StyledDiv>
         </>
     );
+
+
+
 }
 
 const StyledDiv = styled.div`
@@ -56,7 +70,13 @@ const StyledDiv = styled.div`
         justify-content: center;
         align-items: center;
         z-index: 99;
+        opacity: 0.2;
+        transition: 0.2s ease-out;
     },
+.NavContainer:hover{
+    transition: 0.2s ease-in;
+    opacity: 1;
+},
     .gridContainer {
         display: grid;
         grid-template-columns: repeat(${Columns}, 3fr);
