@@ -1,30 +1,92 @@
 ﻿import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Constants from './constants.js';
+import { useEffect, useState } from "react";
 
-export default function Node(props) {
-
-    return (
-        <>
-            <StyldedWrapper>
-                <div className="box" onClick={()=>console.log(`clicked at ${props.idx}`)}></div>
-            </StyldedWrapper>
-        </>
-    )
-}
-Node.propTypes = {
-    idx: PropTypes.number,
-}
-const StyldedWrapper = styled.div`
+const StyledWrapper = styled.div`
     .box {
         height: ${Constants.nodeHeight}px;
         width: ${Constants.nodeWidth}px;
-        background-color: transparent;
         border: 1px solid black;
         padding: 0;
         margin: 0;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
     }
     .box:hover {
-        transform: scale(80%);
+        transform: scale(0.8);
     }
-`
+
+    .node-symbol {
+        font-weight: bold;
+        font-size: 1.2em;
+        position: absolute;
+        color: black;
+        text-shadow: 1px 1px 1px white, -1px -1px 1px white, 1px -1px 1px white, -1px 1px 1px white;
+    }
+
+    .end-symbol {
+        color: #e74c3c;
+        font-weight: bolder;
+    }
+
+    .start-symbol {
+        color: #2ecc71;
+        font-weight: bolder;
+    }
+`;
+
+export default function Node(props) {
+    const [state, setState] = useState(props.stateValue);
+    const [color, setColor] = useState('transparent');
+    const [isEnd, setEnd] = useState(props.isEnd);
+    const [isStart, setStart] = useState(props.isStart);
+
+    useEffect(() => {
+        switch (state) {
+            case 0:
+                setColor(Constants.DefaultNodeColor);
+                break;
+            case 1:
+                setColor(Constants.WallNodeColor);
+                break;
+            case 2:
+                setColor(Constants.VisitedNodeColor);
+                break;
+            case 3:
+                setColor(Constants.ShortestNodeColor);
+                break;
+            default:
+                break;
+        }
+    }, [state]);
+
+    function MakeWall(){
+        props.wallCell(props.idx);
+        setState(1);
+    }
+
+    return (
+        <StyledWrapper>
+            <div
+                className="box"
+                style={{ backgroundColor: color }}
+                onClick={() => setState((state === 1) ? 0 : 1)}
+            >
+                {isEnd && <span className="node-symbol end-symbol">O</span>}
+                {isStart && <span className="node-symbol start-symbol">&#62;</span>}
+            </div>
+        </StyledWrapper>
+    );
+}
+
+Node.propTypes = {
+    idx: PropTypes.number,
+    stateValue: PropTypes.number.isRequired,
+    wallCell: PropTypes.func.isRequired,
+    isEnd: PropTypes.bool.isRequired,
+    isStart: PropTypes.bool.isRequired,
+};

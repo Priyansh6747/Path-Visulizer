@@ -2,22 +2,34 @@
 import Constants from "./constants.js";
 import Node from "./Node.jsx";
 import Nav from "./Components/Navbar.jsx";
+import {getTwoUniqueRandomNumbers} from "../HelperFunctions.js";
+import {useState} from "react";
 
 const Columns = Math.floor(window.innerWidth / Constants.nodeWidth);
 const Rows = Math.floor(window.innerHeight / Constants.nodeHeight);
 
 export default function PathVisualizer() {
-
+    let cells = [];
+    function wallCell(idx){
+        console.log(idx);
+    }
+    // get random indexes for start and end
+    const idxes = getTwoUniqueRandomNumbers(Rows * Columns -1);
+    const [start, setStart] = useState(idxes[0]);
+    const [end, setEnd] = useState(idxes[1]);
     const renderGrid = () => {
-        const cells = [];
+
         for (let i = 0; i < Rows; i++) {
             for (let j = 0; j < Columns; j++) {
-                cells.push(
-                    <Node
-                        key={(Columns * i + j).toString()}
-                        idx = {Columns * i + j}
-                    />
-                );
+                const currentCellIdx = Columns * i +j;
+                    let cell = <Node
+                    key={currentCellIdx.toString()}
+                    idx = {currentCellIdx}
+                    wallCell={wallCell}
+                    stateValue={0}
+                    isStart={currentCellIdx === start} isEnd={currentCellIdx === end}
+                />
+                cells.push(cell);
             }
         }
         return cells;
@@ -43,6 +55,7 @@ const StyledDiv = styled.div`
         height: 5vh;
         justify-content: center;
         align-items: center;
+        z-index: 99;
     },
     .gridContainer {
         display: grid;
