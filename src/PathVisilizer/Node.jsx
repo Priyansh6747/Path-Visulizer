@@ -4,11 +4,11 @@ import Constants from './constants.js';
 import { useEffect, useState } from "react";
 
 export default function Node(props) {
-    const [state, setState] = useState(props.stateValue);
+    // Remove the state for stateValue since we'll use props directly
     const [color, setColor] = useState('transparent');
 
     useEffect(() => {
-        switch (state) {
+        switch (props.stateValue) {
             case 0:
                 setColor(Constants.DefaultNodeColor);
                 break;
@@ -24,16 +24,11 @@ export default function Node(props) {
             default:
                 break;
         }
-    }, [state]);
+    }, [props.stateValue]); // Update when props change
 
-    function MakeWall(){
-        if (state === 1 ) {
-            props.setWall(props.idx , 0);
-            setState(0)
-        }else if (!props.isStart && !props.isEnd){
-            props.setWall(props.idx , 1);
-            setState(1)
-        }
+    function MakeWall() {
+        props.setWall(props.idx, (props.stateValue === 1)?0:1);
+        setColor((color === Constants.WallNodeColor)?Constants.DefaultNodeColor:Constants.WallNodeColor);
     }
 
     return (
@@ -43,7 +38,7 @@ export default function Node(props) {
                 style={{ backgroundColor: color }}
                 onClick={() => MakeWall()}
             >
-                {props.isEnd && <span className="node-symbol end-symbol">X</span>}
+                {props.isEnd && <span className="node-symbol end-symbol">E</span>}
                 {props.isStart && <span className="node-symbol start-symbol">S</span>}
             </div>
         </StyledWrapper>
@@ -90,7 +85,7 @@ const StyledWrapper = styled.div`
     }
 
     .start-symbol {
-        color: #c1dc0f;
+        color: #f82b2b;
         font-weight: bolder;
     }
 `;

@@ -120,3 +120,58 @@ pub fn show_buffer(){
     console::log_1(&s.into());
 }
 
+#[wasm_bindgen]
+pub fn handle_dijkstra(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
+    let buffer = match get_buffer_as_vec() {
+        Some(data) => data,
+        None => {
+            console::error_1(&"No buffer data available".into());
+            return Vec::new();
+        }
+    };
+
+    // Convert buffer (u8) to grid (i32)
+    let grid: Vec<i32> = buffer.iter().map(|&x| x as i32).collect();
+
+    // Calculate row and col from linear index
+    let start_row = start / cols;
+    let start_col = start % cols;
+    let end_row = end / cols;
+    let end_col = end % cols;
+
+    let (result_grid, visited_order, path_indexes) = dijkstra::find_shortest_path(
+        grid,
+        start_row,
+        start_col,
+        end_row,
+        end_col,
+        rows,
+        cols
+    );
+
+    let result_buffer: Vec<u8> = result_grid.iter().map(|&x| x as u8).collect();
+
+
+    update_shared_buffer(result_buffer);
+
+    // Return both visited order and path indexes as a combined array for JS
+    // Format: [visited_count, ...visited_indexes, path_count, ...path_indexes]
+    let mut combined = Vec::new();
+
+    // Add visited order length and indexes
+    combined.push(visited_order.len());
+    combined.extend(visited_order);
+
+    // Add path indexes length and indexes
+    combined.push(path_indexes.len());
+    combined.extend(path_indexes);
+
+    combined
+}
+
+
+fn update_shared_buffer(data: Vec<u8>) {
+    for (idx , val) in data.iter().enumerate() {
+        modify_from_rust(idx,*val);
+    }
+}

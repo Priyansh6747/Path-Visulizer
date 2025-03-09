@@ -1,11 +1,11 @@
 ﻿
 const Constants = {
-    nodeWidth: 30,
-    nodeHeight: 30,
+    nodeWidth: 28,
+    nodeHeight: 28,
 
-    DefaultNodeColor: "transparent",
-    WallNodeColor: 'black',
-    VisitedNodeColor: 'blue',
-    ShortestNodeColor: 'yellow',
+    DefaultNodeColor: "#E2EAF4",
+    WallNodeColor: '#8D6F64',
+    VisitedNodeColor: '#5DE2E7',
+    ShortestNodeColor: '#7DDA58',
 }
 export default Constants

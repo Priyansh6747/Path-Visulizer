@@ -38,6 +38,14 @@ export default function PathVisualizer() {
         Rust.show_buffer();
     }
 
+    async function handleDijkstra(){
+        await startRust();
+        let a =Rust.handle_dijkstra(start,end,Rows,Columns);
+        Rust.show_buffer();
+        console.log(a);
+        setCellState(Rust.get_buffer_copy());
+    }
+
     // get random indexes for start and end
     const idxes = getTwoUniqueRandomNumbers(Rows * Columns - 1);
     const [start, setStart] = useState(idxes[0]); 
@@ -53,13 +61,11 @@ export default function PathVisualizer() {
         for (let i = 0; i < Rows; i++) {
             for (let j = 0; j < Columns; j++) {
                 const currentCellIdx = Columns * i + j;
-                const stateValue = getCellStateValue(currentCellIdx);
-
                 let cell = <Node
                     key={currentCellIdx.toString()}
                     idx={currentCellIdx}
                     setWall={setWall}
-                    stateValue={stateValue}
+                    stateValue={cellState?cellState[currentCellIdx]:0}
                     isStart={currentCellIdx === start}
                     isEnd={currentCellIdx === end}
                 />
@@ -69,14 +75,12 @@ export default function PathVisualizer() {
         return Cells;
     };
 
-    const getCellStateValue = (idx) => {
-        return cellState?cellState[idx]:0;
-    };
+
 
     return (
         <>
             <StyledDiv>
-                <div className="NavContainer"><Nav/></div>
+                <div className="NavContainer" ><Nav handlePlay = {handleDijkstra} /></div>
                 <div className="gridContainer">
                     {renderGrid()}
                 </div>
