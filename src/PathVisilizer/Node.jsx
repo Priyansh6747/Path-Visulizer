@@ -4,7 +4,6 @@ import Constants from './constants.js';
 import { useEffect, useState } from "react";
 
 export default function Node(props) {
-    // Remove the state for stateValue since we'll use props directly
     const [color, setColor] = useState('transparent');
 
     useEffect(() => {
@@ -24,11 +23,12 @@ export default function Node(props) {
             default:
                 break;
         }
-    }, [props.stateValue]); // Update when props change
+    }, [props.stateValue]);
 
     function MakeWall() {
-        props.setWall(props.idx, (props.stateValue === 1)?0:1);
-        setColor((color === Constants.WallNodeColor)?Constants.DefaultNodeColor:Constants.WallNodeColor);
+        if (props.isStart || props.isEnd) {return}
+        props.setWall(props.idx, (props.stateValue === 1) ? 0 : 1);
+        setColor((color === Constants.WallNodeColor) ? Constants.DefaultNodeColor : Constants.WallNodeColor);
     }
 
     return (
@@ -36,7 +36,19 @@ export default function Node(props) {
             <div
                 className="box"
                 style={{ backgroundColor: color }}
-                onClick={() => MakeWall()}
+                onClick={MakeWall}
+                onMouseDown={() => {
+                    MakeWall();
+                    props.onMouseDown(true);
+                }}
+                onMouseUp={() => {
+                    props.onMouseDown(false);
+                }}
+                onMouseEnter={() => {
+                    if (props.mouseIsPressed) {
+                        MakeWall();
+                    }
+                }}
             >
                 {props.isEnd && <span className="node-symbol end-symbol">E</span>}
                 {props.isStart && <span className="node-symbol start-symbol">S</span>}
@@ -51,6 +63,8 @@ Node.propTypes = {
     setWall: PropTypes.func.isRequired,
     isEnd: PropTypes.bool.isRequired,
     isStart: PropTypes.bool.isRequired,
+    mouseIsPressed: PropTypes.bool.isRequired,
+    onMouseDown: PropTypes.func.isRequired,
 };
 
 const StyledWrapper = styled.div`

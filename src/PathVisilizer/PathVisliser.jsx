@@ -19,6 +19,7 @@ const Rows = Math.floor(window.innerHeight / Constants.nodeHeight);
 export default function PathVisualizer() {
     const [cellState, setCellState] = useState(null);
     const [initialized, setInitialized] = useState(false);
+    const [mouseDown, setMouseDown] = useState(false);
 
     useEffect(() => {
         async function initialize() {
@@ -68,6 +69,8 @@ export default function PathVisualizer() {
                     stateValue={cellState?cellState[currentCellIdx]:0}
                     isStart={currentCellIdx === start}
                     isEnd={currentCellIdx === end}
+                    mouseIsPressed={mouseDown}
+                    onMouseDown={setMouseDown}
                 />
                 Cells.push(cell);
             }
@@ -109,6 +112,7 @@ const StyledDiv = styled.div`
         opacity: 1;
     },
     .gridContainer {
+        background-color: ${Constants.BackgroundColor};
         display: grid;
         grid-template-columns: repeat(${Columns}, 3fr);
         gap: 0;
