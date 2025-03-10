@@ -98,6 +98,19 @@ pub fn get_buffer_slice_as_vec(start: usize, end: Option<usize>) -> Option<Vec<u
 }
 
 #[wasm_bindgen]
+pub fn get_buffer_ref() -> js_sys::Uint8Array {
+    SHARED_BUFFER.with(|cell| {
+        if let Some(buffer) = &*cell.borrow() {
+            unsafe {
+                js_sys::Uint8Array::view(buffer.as_slice())
+            }
+        } else {
+            console::log_1(&"No buffer".into());
+            js_sys::Uint8Array::new(&JsValue::from(0))
+        }
+    })
+}
+#[wasm_bindgen]
 pub fn get_buffer_copy() -> js_sys::Uint8Array {
     SHARED_BUFFER.with(|cell| {
         if let Some(buffer) = &*cell.borrow() {
@@ -200,13 +213,17 @@ fn clear_buffer(length:usize) {
 }
 
 #[wasm_bindgen]
-pub fn gen_maze(cols: usize) {
+pub fn gen_maze(start: usize , end : usize, cols: usize) {
     let mut grid;
     match get_buffer_as_vec() {
         Some(V) => {
             grid = V;
             maze::mazify(&mut grid, cols);
             for (idx , val) in grid.iter().enumerate() {
+                if idx == start || idx == end {
+                    modify_from_rust(idx,0);
+                    continue;
+                }
                 modify_from_rust(idx,*val);
             }
         },

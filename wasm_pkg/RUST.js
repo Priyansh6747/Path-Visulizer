@@ -57,6 +57,14 @@ export function modify_from_rust(index, value) {
 /**
  * @returns {Uint8Array}
  */
+export function get_buffer_ref() {
+    const ret = wasm.get_buffer_ref();
+    return ret;
+}
+
+/**
+ * @returns {Uint8Array}
+ */
 export function get_buffer_copy() {
     const ret = wasm.get_buffer_copy();
     return ret;
@@ -102,10 +110,12 @@ export function clear_shared_buffer() {
 }
 
 /**
+ * @param {number} start
+ * @param {number} end
  * @param {number} cols
  */
-export function gen_maze(cols) {
-    wasm.gen_maze(cols);
+export function gen_maze(start, end, cols) {
+    wasm.gen_maze(start, end, cols);
 }
 
 async function __wbg_load(module, imports) {
