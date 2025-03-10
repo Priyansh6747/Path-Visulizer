@@ -26,10 +26,9 @@ export default function PathVisualizer() {
             await startRust();
             const buffer = Rust.create_cell_state_buffer(Rows * Columns);
             setCellState(buffer);
-            Rust.show_buffer();
             setInitialized(true);
         }
-        initialize();
+        initialize().then(()=>console.log("Initializing..."));
     }, []);
 
     // flag 1 means set state 1 flag 0 means set state 0
@@ -39,12 +38,48 @@ export default function PathVisualizer() {
         Rust.show_buffer();
     }
 
-    async function handleDijkstra(){
-        await startRust();
-        let a =Rust.handle_dijkstra(start,end,Rows,Columns);
-        Rust.show_buffer();
-        console.log(a);
-        setCellState(Rust.get_buffer_copy());
+    function handleDijkstra() {
+        let currentCellState = Rust.get_buffer_copy();
+        let pathData = Rust.handle_dijkstra(start, end, Rows, Columns);
+        // Parse the path data based on the format [noOfVisitedNodes, idx, idx, ..., noOfNodesInShortestPath, idx, idx, ...]
+        const noOfVisitedNodes = pathData[0];
+        const visitedNodes = pathData.slice(1, noOfVisitedNodes + 1);
+        const noOfShortestPathNodes = pathData[noOfVisitedNodes + 1];
+        const shortestPathNodes = pathData.slice(noOfVisitedNodes + 2, noOfVisitedNodes + 2 + noOfShortestPathNodes);
+        const finalCellState = new Uint8Array(currentCellState);
+        animatePath(currentCellState, visitedNodes, shortestPathNodes, finalCellState);
+        const totalAnimationTime = (visitedNodes.length * 20) + (shortestPathNodes.length * 50);
+        setTimeout(() => {
+            setCellState(finalCellState);
+        }, totalAnimationTime + 50); //  a small buffer
+    }
+
+    function animatePath(initialCellState, visitedNodes, pathNodes, finalState) {
+        let currentCellState = new Uint8Array(initialCellState);
+
+        // Animate visited nodes first
+        for (let i = 0; i < visitedNodes.length; i++) {
+            setTimeout(() => {
+                const animationState = new Uint8Array(currentCellState);
+                const idx = visitedNodes[i];
+                animationState[idx] = 2;
+                finalState[idx] = 2;
+                currentCellState = animationState;
+                setCellState(animationState);
+            }, i * Constants.visitedAnimationTimeOut);
+        }
+
+        // Then animate shortest path nodes
+        for (let i = 0; i < pathNodes.length; i++) {
+            setTimeout(() => {
+                const animationState = new Uint8Array(currentCellState);
+                const idx = pathNodes[i];
+                animationState[idx] = 3;
+                finalState[idx] = 3;
+                currentCellState = animationState;
+                setCellState(animationState);
+            }, (visitedNodes.length * Constants.visitedAnimationTimeOut) + (i * Constants.pathAnimationTimeOut));
+        }
     }
 
     // get random indexes for start and end

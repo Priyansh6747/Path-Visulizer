@@ -86,7 +86,6 @@ fn reconstruct_path(
     path
 }
 
-// Modified to return the visited indexes in order
 pub fn dijkstra_grid(
     grid: &mut Vec<i32>,
     start: Position,
@@ -98,7 +97,7 @@ pub fn dijkstra_grid(
     let graph = build_graph_from_grid(grid, rows, cols);
 
     // Run Dijkstra's algorithm and collect visited indexes in order
-    let (shortest_paths, visited_order) = dijkstra_with_visit_order(&graph, start, cols);
+    let (shortest_paths, visited_order) = dijkstra_with_visit_order(&graph, start, end, cols);
 
     // Reconstruct the path if end is reachable
     let path = if shortest_paths.contains_key(&end) {
@@ -135,10 +134,11 @@ pub fn get_path_indexes(path: &Vec<Position>, cols: usize) -> Vec<usize> {
         .collect()
 }
 
-// Modified Dijkstra function to track visit order
+// Modified Dijkstra function to track visit order and stop when reaching the end
 fn dijkstra_with_visit_order(
     graph: &BTreeMap<Position, BTreeMap<Position, usize>>,
     start: Position,
+    end: Position,
     cols: usize,
 ) -> (BTreeMap<Position, Option<(Position, usize)>>, Vec<usize>) {
     let mut ans = BTreeMap::new();
@@ -164,6 +164,11 @@ fn dijkstra_with_visit_order(
     while let Some((path_weight, vertex)) = prio.pop_first() {
         // Add current vertex to visited order
         visited_order.push(vertex.0 * cols + vertex.1);
+
+        // Check if we've reached the end destination
+        if vertex == end {
+            break;  // Stop the algorithm once we reach the destination
+        }
 
         if !graph.contains_key(&vertex) {
             continue;
