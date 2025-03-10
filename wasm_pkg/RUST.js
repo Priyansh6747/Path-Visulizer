@@ -74,6 +74,10 @@ export function show_buffer() {
     wasm.show_buffer();
 }
 
+export function reset_non_wall_nodes() {
+    wasm.reset_non_wall_nodes();
+}
+
 let cachedUint32ArrayMemory0 = null;
 
 function getUint32ArrayMemory0() {

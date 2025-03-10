@@ -133,6 +133,27 @@ pub fn show_buffer(){
     let s:String = v.iter().map(|i| i.to_string()).collect();
     console::log_1(&s.into());
 }
+fn clear_buffer(length:usize) {
+    for i in 0..length {
+        modify_from_rust(i,0);
+    }
+}
+#[wasm_bindgen]
+pub fn reset_non_wall_nodes() {
+    let v = match get_buffer_as_vec() {
+        Some(vec) => vec,
+        _none => {
+            console::log_1(&"Buffer not found".into());
+            return;
+        }
+    };
+
+    for (idx , val) in v.iter().enumerate() {
+        if *val != 1 {
+            modify_from_rust(idx,0);
+        }
+    }
+}
 
 #[wasm_bindgen]
 pub fn handle_dijkstra(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
@@ -206,11 +227,7 @@ pub fn clear_shared_buffer() -> bool {
 }
 
 
-fn clear_buffer(length:usize) {
-    for i in 0..length {
-        modify_from_rust(i,0);
-    }
-}
+
 
 #[wasm_bindgen]
 pub fn gen_maze(start: usize , end : usize, cols: usize) {

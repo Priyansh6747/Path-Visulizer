@@ -47,6 +47,7 @@ export default function PathVisualizer() {
     }
 
     function handleDijkstra() {
+        Rust.reset_non_wall_nodes();
         let currentCellState = Rust.get_buffer_copy();
         let pathData = Rust.handle_dijkstra(start, end, Rows, Columns);
         // Parse the path data based on the format [noOfVisitedNodes, idx, idx, ..., noOfNodesInShortestPath, idx, idx, ...]
@@ -56,7 +57,7 @@ export default function PathVisualizer() {
         const shortestPathNodes = pathData.slice(noOfVisitedNodes + 2, noOfVisitedNodes + 2 + noOfShortestPathNodes);
         const finalCellState = new Uint8Array(currentCellState);
         animatePath(currentCellState, visitedNodes, shortestPathNodes, finalCellState);
-        const totalAnimationTime = (visitedNodes.length * 20) + (shortestPathNodes.length * 50);
+        const totalAnimationTime = (visitedNodes.length * Constants.visitedAnimationTimeOut) + (shortestPathNodes.length * Constants.pathAnimationTimeOut);
         setTimeout(() => {
             setCellState(Rust.get_buffer_ref());
         }, totalAnimationTime + 50); //  a small buffer

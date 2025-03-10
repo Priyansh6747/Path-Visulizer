@@ -8,6 +8,7 @@ export function modify_from_rust(index: number, value: number): boolean;
 export function get_buffer_ref(): Uint8Array;
 export function get_buffer_copy(): Uint8Array;
 export function show_buffer(): void;
+export function reset_non_wall_nodes(): void;
 export function handle_dijkstra(start: number, end: number, rows: number, cols: number): Uint32Array;
 export function clear_shared_buffer(): boolean;
 export function gen_maze(start: number, end: number, cols: number): void;
@@ -23,6 +24,7 @@ export interface InitOutput {
   readonly get_buffer_ref: () => any;
   readonly get_buffer_copy: () => any;
   readonly show_buffer: () => void;
+  readonly reset_non_wall_nodes: () => void;
   readonly handle_dijkstra: (a: number, b: number, c: number, d: number) => [number, number];
   readonly clear_shared_buffer: () => number;
   readonly gen_maze: (a: number, b: number, c: number) => void;

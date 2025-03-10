@@ -8,6 +8,7 @@ export const modify_from_rust: (a: number, b: number) => number;
 export const get_buffer_ref: () => any;
 export const get_buffer_copy: () => any;
 export const show_buffer: () => void;
+export const reset_non_wall_nodes: () => void;
 export const handle_dijkstra: (a: number, b: number, c: number, d: number) => [number, number];
 export const clear_shared_buffer: () => number;
 export const gen_maze: (a: number, b: number, c: number) => void;
