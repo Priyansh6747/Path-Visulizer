@@ -1,5 +1,6 @@
 mod utils;
 mod dijkstra;
+mod maze;
 
 use wasm_bindgen::prelude::*;
 use web_sys::console;
@@ -195,5 +196,20 @@ pub fn clear_shared_buffer() -> bool {
 fn clear_buffer(length:usize) {
     for i in 0..length {
         modify_from_rust(i,0);
+    }
+}
+
+#[wasm_bindgen]
+pub fn gen_maze(cols: usize) {
+    let mut grid;
+    match get_buffer_as_vec() {
+        Some(V) => {
+            grid = V;
+            maze::mazify(&mut grid, cols);
+            for (idx , val) in grid.iter().enumerate() {
+                modify_from_rust(idx,*val);
+            }
+        },
+        None => console::log_1(&"No Buffer found".into())
     }
 }

@@ -124,6 +124,13 @@ export default function PathVisualizer() {
         }
     }
 
+    function refreshCells() {
+        setCellState(current => current);
+        Rust.show_buffer();
+    }
+
+
+
     // get random indexes for start and end
     const idxes = getTwoUniqueRandomNumbers(Rows * Columns - 1);
     const [start, setStart] = useState(idxes[0]); 
@@ -163,6 +170,7 @@ export default function PathVisualizer() {
             <StyledDiv>
                 <div className="NavContainer" ><Nav
                     handlePlay = {handleDijkstra}
+                    refresh = {refreshCells}
                 /></div>
                 <div className="gridContainer">
                     {renderGrid()}

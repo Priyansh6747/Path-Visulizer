@@ -9,6 +9,7 @@ export const get_buffer_copy: () => any;
 export const show_buffer: () => void;
 export const handle_dijkstra: (a: number, b: number, c: number, d: number) => [number, number];
 export const clear_shared_buffer: () => number;
+export const gen_maze: (a: number) => void;
 export const create_shared_buffer: (a: number) => any;
 export const __wbindgen_export_0: WebAssembly.Table;
 export const __wbindgen_free: (a: number, b: number, c: number) => void;

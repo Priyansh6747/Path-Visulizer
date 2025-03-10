@@ -8,7 +8,7 @@ const Radio = (props) => {
     async function clear(){
         await startRust();
         clear_shared_buffer();
-        window.location.reload();
+        props.refresh();
     }
     return (
         <StyledWrapper>
@@ -53,6 +53,7 @@ const Radio = (props) => {
 
 Radio.PropTypes = {
     handlePlay: PropTypes.func.isRequired,
+    refresh: PropTypes.func.isRequired,
 }
 
 const StyledWrapper = styled.div`
