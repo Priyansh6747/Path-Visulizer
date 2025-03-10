@@ -46,22 +46,34 @@ export default function PathVisualizer() {
         refreshCells();
     }
 
-    function handleDijkstra() {
+    function handlePathfinding(algorithm) {
         Rust.reset_non_wall_nodes();
         let currentCellState = Rust.get_buffer_copy();
-        let pathData = Rust.handle_dijkstra(start, end, Rows, Columns);
+        let pathData = algorithm(start, end, Rows, Columns);
+
         // Parse the path data based on the format [noOfVisitedNodes, idx, idx, ..., noOfNodesInShortestPath, idx, idx, ...]
         const noOfVisitedNodes = pathData[0];
         const visitedNodes = pathData.slice(1, noOfVisitedNodes + 1);
         const noOfShortestPathNodes = pathData[noOfVisitedNodes + 1];
         const shortestPathNodes = pathData.slice(noOfVisitedNodes + 2, noOfVisitedNodes + 2 + noOfShortestPathNodes);
+
         const finalCellState = new Uint8Array(currentCellState);
         animatePath(currentCellState, visitedNodes, shortestPathNodes, finalCellState);
+
         const totalAnimationTime = (visitedNodes.length * Constants.visitedAnimationTimeOut) + (shortestPathNodes.length * Constants.pathAnimationTimeOut);
         setTimeout(() => {
             setCellState(Rust.get_buffer_ref());
-        }, totalAnimationTime + 50); //  a small buffer
+        }, totalAnimationTime + 50); // a small buffer
     }
+
+    function handleDijkstra() {
+        handlePathfinding(Rust.handle_dijkstra);
+    }
+
+    function handleAStar() {
+        handlePathfinding(Rust.handle_a_star);
+    }
+
 
 
     //Default function to handle update animation
@@ -181,7 +193,7 @@ export default function PathVisualizer() {
             <StyledDiv>
                 <div className="NavContainer">
                     <Nav
-                        handlePlay={handleDijkstra}
+                        handlePlay={handleAStar}
                         maze = {mazify}
                         refresh={refreshCells}
                     />

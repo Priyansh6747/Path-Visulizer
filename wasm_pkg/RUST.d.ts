@@ -9,9 +9,10 @@ export function get_buffer_ref(): Uint8Array;
 export function get_buffer_copy(): Uint8Array;
 export function show_buffer(): void;
 export function reset_non_wall_nodes(): void;
-export function handle_dijkstra(start: number, end: number, rows: number, cols: number): Uint32Array;
 export function clear_shared_buffer(): boolean;
 export function gen_maze(start: number, end: number, cols: number): void;
+export function handle_dijkstra(start: number, end: number, rows: number, cols: number): Uint32Array;
+export function handle_a_star(start: number, end: number, rows: number, cols: number): Uint32Array;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -25,9 +26,10 @@ export interface InitOutput {
   readonly get_buffer_copy: () => any;
   readonly show_buffer: () => void;
   readonly reset_non_wall_nodes: () => void;
-  readonly handle_dijkstra: (a: number, b: number, c: number, d: number) => [number, number];
   readonly clear_shared_buffer: () => number;
   readonly gen_maze: (a: number, b: number, c: number) => void;
+  readonly handle_dijkstra: (a: number, b: number, c: number, d: number) => [number, number];
+  readonly handle_a_star: (a: number, b: number, c: number, d: number) => [number, number];
   readonly create_shared_buffer: (a: number) => any;
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
