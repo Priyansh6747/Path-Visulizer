@@ -175,3 +175,25 @@ fn update_shared_buffer(data: Vec<u8>) {
         modify_from_rust(idx,*val);
     }
 }
+
+#[wasm_bindgen]
+pub fn clear_shared_buffer() -> bool {
+    let buffer = get_buffer_as_vec();
+    match buffer {
+        Some(v) => {
+            clear_buffer(v.len());
+            true
+        },
+        None => {
+            console::log_1(&"No buffer found".into());
+            false
+        }
+    }
+}
+
+
+fn clear_buffer(length:usize) {
+    for i in 0..length {
+        modify_from_rust(i,0);
+    }
+}

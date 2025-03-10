@@ -93,6 +93,14 @@ export function handle_dijkstra(start, end, rows, cols) {
     return v1;
 }
 
+/**
+ * @returns {boolean}
+ */
+export function clear_shared_buffer() {
+    const ret = wasm.clear_shared_buffer();
+    return ret !== 0;
+}
+
 async function __wbg_load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {

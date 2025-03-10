@@ -20,6 +20,9 @@ export default function Node(props) {
             case 3:
                 setColor(Constants.ShortestNodeColor);
                 break;
+            case 4:
+                setColor(Constants.visitingNodeColor);
+                break;
             default:
                 break;
         }

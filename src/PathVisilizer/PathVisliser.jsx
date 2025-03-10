@@ -16,11 +16,13 @@ import * as Rust from "../../wasm_pkg/RUST.js"
 const Columns = Math.floor(window.innerWidth / Constants.nodeWidth);
 const Rows = Math.floor(window.innerHeight / Constants.nodeHeight);
 
+//The main component
 export default function PathVisualizer() {
     const [cellState, setCellState] = useState(null);
     const [initialized, setInitialized] = useState(false);
     const [mouseDown, setMouseDown] = useState(false);
 
+    //Global initialization for rust
     useEffect(() => {
         async function initialize() {
             await startRust();
@@ -31,6 +33,7 @@ export default function PathVisualizer() {
         initialize().then(()=>console.log("Initializing..."));
     }, []);
 
+    //Function to toggle a node into wall
     // flag 1 means set state 1 flag 0 means set state 0
     function setWall(idx,flag) {
         if (!cellState || idx >= Rows * Columns) {return}
@@ -54,31 +57,70 @@ export default function PathVisualizer() {
         }, totalAnimationTime + 50); //  a small buffer
     }
 
+
+    //Default function to handle update animation
+    //Does not account for CSS animation
     function animatePath(initialCellState, visitedNodes, pathNodes, finalState) {
         let currentCellState = new Uint8Array(initialCellState);
+        let previousNodeIdx = null;
 
         // Animate visited nodes first
         for (let i = 0; i < visitedNodes.length; i++) {
             setTimeout(() => {
                 const animationState = new Uint8Array(currentCellState);
                 const idx = visitedNodes[i];
-                animationState[idx] = 2;
+
+                // Change the previous "current" node to regular visited state
+                if (previousNodeIdx !== null) {
+                    animationState[previousNodeIdx] = 2;
+                    finalState[previousNodeIdx] = 2;
+                }
+                animationState[idx] = 4;
                 finalState[idx] = 2;
+                previousNodeIdx = idx;
                 currentCellState = animationState;
                 setCellState(animationState);
             }, i * Constants.visitedAnimationTimeOut);
         }
+        if (visitedNodes.length > 0) {
+            setTimeout(() => {
+                const lastIdx = visitedNodes[visitedNodes.length - 1];
+                const animationState = new Uint8Array(currentCellState);
+                animationState[lastIdx] = 2;
+                currentCellState = animationState;
+                setCellState(animationState);
+            }, visitedNodes.length * Constants.visitedAnimationTimeOut);
+        }
 
         // Then animate shortest path nodes
+        let previousPathIdx = null;
         for (let i = 0; i < pathNodes.length; i++) {
             setTimeout(() => {
                 const animationState = new Uint8Array(currentCellState);
                 const idx = pathNodes[i];
-                animationState[idx] = 3;
+                if (previousPathIdx !== null) {
+                    animationState[previousPathIdx] = 3;
+                    finalState[previousPathIdx] = 3;
+                }
+                animationState[idx] = 4;
                 finalState[idx] = 3;
+                previousPathIdx = idx;
                 currentCellState = animationState;
                 setCellState(animationState);
-            }, (visitedNodes.length * Constants.visitedAnimationTimeOut) + (i * Constants.pathAnimationTimeOut));
+            }, (visitedNodes.length * Constants.visitedAnimationTimeOut) +
+                (i * Constants.pathAnimationTimeOut));
+        }
+
+        // Set the final path node to state 3 after all path animations
+        if (pathNodes.length > 0) {
+            setTimeout(() => {
+                const lastIdx = pathNodes[pathNodes.length - 1];
+                const animationState = new Uint8Array(currentCellState);
+                animationState[lastIdx] = 3;
+                currentCellState = animationState;
+                setCellState(animationState);
+            }, (visitedNodes.length * Constants.visitedAnimationTimeOut) +
+                (pathNodes.length * Constants.pathAnimationTimeOut));
         }
     }
 
@@ -87,6 +129,7 @@ export default function PathVisualizer() {
     const [start, setStart] = useState(idxes[0]); 
     const [end, setEnd] = useState(idxes[1]);
 
+    //Creating the Grid
     const renderGrid = () => {
         let Cells = [];
 
@@ -118,7 +161,9 @@ export default function PathVisualizer() {
     return (
         <>
             <StyledDiv>
-                <div className="NavContainer" ><Nav handlePlay = {handleDijkstra} /></div>
+                <div className="NavContainer" ><Nav
+                    handlePlay = {handleDijkstra}
+                /></div>
                 <div className="gridContainer">
                     {renderGrid()}
                 </div>
