@@ -41,6 +41,11 @@ export default function PathVisualizer() {
         Rust.show_buffer();
     }
 
+    function mazify() {
+        Rust.gen_maze(start ,end, Columns);
+        refreshCells();
+    }
+
     function handleDijkstra() {
         let currentCellState = Rust.get_buffer_copy();
         let pathData = Rust.handle_dijkstra(start, end, Rows, Columns);
@@ -53,7 +58,7 @@ export default function PathVisualizer() {
         animatePath(currentCellState, visitedNodes, shortestPathNodes, finalCellState);
         const totalAnimationTime = (visitedNodes.length * 20) + (shortestPathNodes.length * 50);
         setTimeout(() => {
-            setCellState(finalCellState);
+            setCellState(Rust.get_buffer_ref());
         }, totalAnimationTime + 50); //  a small buffer
     }
 
@@ -124,18 +129,28 @@ export default function PathVisualizer() {
         }
     }
 
+
+
+
+
     // get random indexes for start and end
     const idxes = getTwoUniqueRandomNumbers(Rows * Columns - 1);
     const [start, setStart] = useState(idxes[0]); 
     const [end, setEnd] = useState(idxes[1]);
 
     //Creating the Grid
-    const renderGrid = () => {
-        let Cells = [];
 
-        if (!initialized) {
-            return <div className="Loading"><Loading/></div>;
+    const [cellsArray, setCellsArray] = useState([]);
+
+    // Use useEffect to handle the grid initialization
+    useEffect(() => {
+        if (initialized) {
+            renderGrid();
         }
+    }, [initialized, cellState, start, end, mouseDown]);
+
+    const renderGrid = () => {
+        let cells = [];
 
         for (let i = 0; i < Rows; i++) {
             for (let j = 0; j < Columns; j++) {
@@ -144,28 +159,38 @@ export default function PathVisualizer() {
                     key={currentCellIdx.toString()}
                     idx={currentCellIdx}
                     setWall={setWall}
-                    stateValue={cellState?cellState[currentCellIdx]:0}
+                    stateValue={cellState ? cellState[currentCellIdx] : 0}
                     isStart={currentCellIdx === start}
                     isEnd={currentCellIdx === end}
                     mouseIsPressed={mouseDown}
                     onMouseDown={setMouseDown}
                 />
-                Cells.push(cell);
+                cells.push(cell);
             }
         }
-        return Cells;
+        setCellsArray(cells);
     };
 
-
+    function refreshCells() {
+        renderGrid();
+    }
 
     return (
         <>
             <StyledDiv>
-                <div className="NavContainer" ><Nav
-                    handlePlay = {handleDijkstra}
-                /></div>
+                <div className="NavContainer">
+                    <Nav
+                        handlePlay={handleDijkstra}
+                        maze = {mazify}
+                        refresh={refreshCells}
+                    />
+                </div>
                 <div className="gridContainer">
-                    {renderGrid()}
+                    {!initialized ? (
+                        <div className="Loading"><Loading/></div>
+                    ) : (
+                        cellsArray
+                    )}
                 </div>
             </StyledDiv>
         </>

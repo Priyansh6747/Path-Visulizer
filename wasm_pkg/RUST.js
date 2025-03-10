@@ -57,6 +57,14 @@ export function modify_from_rust(index, value) {
 /**
  * @returns {Uint8Array}
  */
+export function get_buffer_ref() {
+    const ret = wasm.get_buffer_ref();
+    return ret;
+}
+
+/**
+ * @returns {Uint8Array}
+ */
 export function get_buffer_copy() {
     const ret = wasm.get_buffer_copy();
     return ret;
@@ -99,6 +107,15 @@ export function handle_dijkstra(start, end, rows, cols) {
 export function clear_shared_buffer() {
     const ret = wasm.clear_shared_buffer();
     return ret !== 0;
+}
+
+/**
+ * @param {number} start
+ * @param {number} end
+ * @param {number} cols
+ */
+export function gen_maze(start, end, cols) {
+    wasm.gen_maze(start, end, cols);
 }
 
 async function __wbg_load(module, imports) {
@@ -154,6 +171,10 @@ function __wbg_get_imports() {
     };
     imports.wbg.__wbg_newwithbyteoffsetandlength_d97e637ebe145a9a = function(arg0, arg1, arg2) {
         const ret = new Uint8Array(arg0, arg1 >>> 0, arg2 >>> 0);
+        return ret;
+    };
+    imports.wbg.__wbg_random_3ad904d98382defe = function() {
+        const ret = Math.random();
         return ret;
     };
     imports.wbg.__wbindgen_init_externref_table = function() {
