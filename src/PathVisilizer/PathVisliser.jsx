@@ -8,6 +8,7 @@ import {useState , useEffect} from "react";
 import Node from "./Node.jsx";
 import Nav from "./Components/Navbar.jsx";
 import Loading from "./Components/Loading.jsx";
+import AlgoPicker from "./Components/Card.jsx"
 
 //import Rust
 import * as Rust from "../../wasm_pkg/RUST.js"
@@ -21,6 +22,8 @@ export default function PathVisualizer() {
     const [cellState, setCellState] = useState(null);
     const [initialized, setInitialized] = useState(false);
     const [mouseDown, setMouseDown] = useState(false);
+    const [AlgoName, setAlgoName] = useState("Dijkstra");
+    const [pickerActive, setPickerActive] = useState(false);
 
     //Global initialization for rust
     useEffect(() => {
@@ -62,6 +65,11 @@ export default function PathVisualizer() {
 
         const totalAnimationTime = (visitedNodes.length * Constants.visitedAnimationTimeOut) + (shortestPathNodes.length * Constants.pathAnimationTimeOut);
         setTimeout(() => {
+            //temp fix for A*
+            let BufferRef = Rust.get_buffer_ref();
+            for (let i = 0; i < cellState.length; i++) {
+                BufferRef[i] = finalCellState[i];
+            }
             setCellState(Rust.get_buffer_ref());
         }, totalAnimationTime + 50); // a small buffer
     }
@@ -72,6 +80,33 @@ export default function PathVisualizer() {
 
     function handleAStar() {
         handlePathfinding(Rust.handle_a_star);
+    }
+
+    const [algo, setAlgo] = useState(0);
+    useEffect(() => {
+        switch (algo) {
+            case 0:
+                setAlgoName("Dijkstra");
+                break;
+            case 1:
+                setAlgoName("A Start")
+                break;
+            default:
+                setAlgoName("Something");
+                break;
+        }
+    },[algo])
+    function playAlgo(){
+        switch (algo) {
+            case 0:
+                handleDijkstra();
+                break;
+            case 1:
+                handleAStar();
+                break;
+            default:
+                break;
+        }
     }
 
 
@@ -193,11 +228,16 @@ export default function PathVisualizer() {
             <StyledDiv>
                 <div className="NavContainer">
                     <Nav
-                        handlePlay={handleAStar}
-                        maze = {mazify}
+                        handlePlay={playAlgo}
+                        AlgoName = {AlgoName}
+                        EnablePicker = {setPickerActive}
+                        maze={mazify}
                         refresh={refreshCells}
                     />
                 </div>
+                {pickerActive? (<div className="algoPicker">
+                    <AlgoPicker changeFlag={setAlgo} Enable = {setPickerActive} />
+                </div>): null}
                 <div className="gridContainer">
                     {!initialized ? (
                         <div className="Loading"><Loading/></div>
@@ -213,7 +253,7 @@ export default function PathVisualizer() {
 
 //styling
 const StyledDiv = styled.div`
-    .NavContainer{
+    .NavContainer {
         display: flex;
         position: absolute;
         left: 35%;
@@ -226,6 +266,23 @@ const StyledDiv = styled.div`
         transition: 0.2s ease-out;
     },
     .NavContainer:hover{
+        transition: 0.2s ease-in;
+        opacity: 1;
+    },
+    .algoPicker {
+        display: flex;
+        position: absolute;
+        right: 0;
+        bottom: 8%;
+        width: auto;
+        height: 5vh;
+        justify-content: center;
+        align-items: center;
+        z-index: 99;
+        opacity: 0.7;
+        transition: 0.2s ease-out;
+    },
+    .algoPicker:hover{
         transition: 0.2s ease-in;
         opacity: 1;
     },
