@@ -24,6 +24,30 @@ export default function PathVisualizer() {
     const [mouseDown, setMouseDown] = useState(false);
     const [AlgoName, setAlgoName] = useState("Dijkstra");
     const [pickerActive, setPickerActive] = useState(false);
+    const [speedModifier, setSpeedModifier] = useState(Constants.fastSpeedModifier);
+
+    function getSpeedName() {
+        switch(speedModifier) {
+            case Constants.fastSpeedModifier :
+                return "FAST";
+            case Constants.normalSpeedModifier :
+                return "NORMAL";
+            case Constants.slowSpeedModifier :
+                return "SLOW";
+        }
+    }
+
+    function toggleSpeed() {
+        if (speedModifier === Constants.fastSpeedModifier) {
+            setSpeedModifier(Constants.slowSpeedModifier);
+        }
+        if (speedModifier === Constants.normalSpeedModifier) {
+            setSpeedModifier(Constants.fastSpeedModifier);
+        }
+        if (speedModifier === Constants.slowSpeedModifier) {
+            setSpeedModifier(Constants.normalSpeedModifier);
+        }
+    }
 
     //Global initialization for rust
     useEffect(() => {
@@ -62,7 +86,7 @@ export default function PathVisualizer() {
         const finalCellState = new Uint8Array(currentCellState);
         animatePath(currentCellState, visitedNodes, shortestPathNodes, finalCellState);
 
-        const totalAnimationTime = (visitedNodes.length * Constants.visitedAnimationTimeOut) + (shortestPathNodes.length * Constants.pathAnimationTimeOut);
+        const totalAnimationTime = (visitedNodes.length * (Constants.visitedAnimationTimeOut + speedModifier)) + (shortestPathNodes.length * (Constants.pathAnimationTimeOut + speedModifier));
         setTimeout(() => {
             //temp fix for A*
             let BufferRef = Rust.get_buffer_ref();
@@ -161,7 +185,7 @@ export default function PathVisualizer() {
                 previousNodeIdx = idx;
                 currentCellState = animationState;
                 setCellState(animationState);
-            }, i * Constants.visitedAnimationTimeOut);
+            }, i * (Constants.visitedAnimationTimeOut + speedModifier));
         }
         if (visitedNodes.length > 0) {
             setTimeout(() => {
@@ -170,7 +194,7 @@ export default function PathVisualizer() {
                 animationState[lastIdx] = 2;
                 currentCellState = animationState;
                 setCellState(animationState);
-            }, visitedNodes.length * Constants.visitedAnimationTimeOut);
+            }, visitedNodes.length * (Constants.visitedAnimationTimeOut + speedModifier));
         }
 
         // Then animate shortest path nodes
@@ -188,8 +212,8 @@ export default function PathVisualizer() {
                 previousPathIdx = idx;
                 currentCellState = animationState;
                 setCellState(animationState);
-            }, (visitedNodes.length * Constants.visitedAnimationTimeOut) +
-                (i * Constants.pathAnimationTimeOut));
+            }, (visitedNodes.length * (Constants.visitedAnimationTimeOut + speedModifier)) +
+                (i * (Constants.pathAnimationTimeOut + speedModifier)));
         }
 
         // Set the final path node to state 3 after all path animations
@@ -200,8 +224,8 @@ export default function PathVisualizer() {
                 animationState[lastIdx] = 3;
                 currentCellState = animationState;
                 setCellState(animationState);
-            }, (visitedNodes.length * Constants.visitedAnimationTimeOut) +
-                (pathNodes.length * Constants.pathAnimationTimeOut));
+            }, (visitedNodes.length * (Constants.visitedAnimationTimeOut + speedModifier)) +
+                (pathNodes.length * (Constants.pathAnimationTimeOut + speedModifier)));
         }
     }
 
@@ -259,6 +283,8 @@ export default function PathVisualizer() {
                         handlePlay={playAlgo}
                         AlgoName = {AlgoName}
                         EnablePicker = {setPickerActive}
+                        toggleSpeed = {toggleSpeed}
+                        speed = {getSpeedName}
                         maze={mazify}
                         refresh={refreshCells}
                     />

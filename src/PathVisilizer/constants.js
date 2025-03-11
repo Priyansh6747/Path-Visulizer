@@ -16,5 +16,10 @@ const Constants = {
     //didn't test how low it can get, but probably it can't get a lot lower
     visitedAnimationTimeOut: 20,
     pathAnimationTimeOut: 50,
+
+    // Don't touch these unless uk what they are
+    fastSpeedModifier: 0,
+    normalSpeedModifier: 70,
+    slowSpeedModifier: 150,
 }
 export default Constants
