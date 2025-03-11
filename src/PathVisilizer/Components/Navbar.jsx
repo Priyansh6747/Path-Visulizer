@@ -1,4 +1,4 @@
-﻿import React from 'react';
+﻿import React, {useState} from 'react';
 import styled from 'styled-components';
 import PropTypes from "prop-types";
 import {startRust} from "./../../HelperFunctions.js"
@@ -9,6 +9,11 @@ const Radio = (props) => {
         await startRust();
         clear_shared_buffer();
         props.refresh();
+    }
+    const [speed, setSpeed] = useState(props.speed());
+    function handleClick(){
+        setSpeed(props.speed());
+        props.toggleSpeed();
     }
     return (
         <StyledWrapper>
@@ -25,11 +30,11 @@ const Radio = (props) => {
                     </svg>
                     {props.AlgoName}
                 </button>
-                <button className="value">
+                <button className="value" onClick = {handleClick}>
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path fill="#7D8590" d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7"/>
                     </svg>
-                    Speed
+                    Speed {speed}
                 </button>
                 <button className="value" onClick={props.maze}>
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -53,6 +58,8 @@ Radio.PropTypes = {
     handlePlay: PropTypes.func.isRequired,
     AlgoName: PropTypes.string.isRequired,
     EnablePicker: PropTypes.func.isRequired,
+    toggleSpeed: PropTypes.func.isRequired,
+    speed: PropTypes.func.isRequired,
     maze: PropTypes.func.isRequired,
     refresh: PropTypes.func.isRequired,
 }

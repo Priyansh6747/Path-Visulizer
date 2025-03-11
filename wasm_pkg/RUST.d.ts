@@ -16,6 +16,7 @@ export function handle_a_star(start: number, end: number, rows: number, cols: nu
 export function handle_greedy_bfs(start: number, end: number, rows: number, cols: number): Uint32Array;
 export function handle_bfs(start: number, end: number, rows: number, cols: number): Uint32Array;
 export function handle_dfs(start: number, end: number, rows: number, cols: number): Uint32Array;
+export function handle_bellman_ford(start: number, end: number, rows: number, cols: number): Uint32Array;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -36,6 +37,7 @@ export interface InitOutput {
   readonly handle_greedy_bfs: (a: number, b: number, c: number, d: number) => [number, number];
   readonly handle_bfs: (a: number, b: number, c: number, d: number) => [number, number];
   readonly handle_dfs: (a: number, b: number, c: number, d: number) => [number, number];
+  readonly handle_bellman_ford: (a: number, b: number, c: number, d: number) => [number, number];
   readonly create_shared_buffer: (a: number) => any;
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
