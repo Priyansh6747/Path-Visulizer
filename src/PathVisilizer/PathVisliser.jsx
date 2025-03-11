@@ -36,17 +36,22 @@ export default function PathVisualizer() {
                 return "SLOW";
         }
     }
+    useEffect(() => {
+        console.log("Speed modifier changed to:", speedModifier);
+        console.log("Speed changed " + getSpeedName());
+    }, [speedModifier]);
 
     function toggleSpeed() {
-        if (speedModifier === Constants.fastSpeedModifier) {
-            setSpeedModifier(Constants.slowSpeedModifier);
-        }
-        if (speedModifier === Constants.normalSpeedModifier) {
-            setSpeedModifier(Constants.fastSpeedModifier);
-        }
-        if (speedModifier === Constants.slowSpeedModifier) {
-            setSpeedModifier(Constants.normalSpeedModifier);
-        }
+        const speedOrder = [
+            Constants.fastSpeedModifier,
+            Constants.normalSpeedModifier,
+            Constants.slowSpeedModifier
+        ];
+
+        const currentIndex = speedOrder.indexOf(speedModifier);
+        const nextIndex = (currentIndex + 1) % speedOrder.length;
+        setSpeedModifier(speedOrder[nextIndex]);
+
     }
 
     //Global initialization for rust
@@ -86,7 +91,8 @@ export default function PathVisualizer() {
         const finalCellState = new Uint8Array(currentCellState);
         animatePath(currentCellState, visitedNodes, shortestPathNodes, finalCellState);
 
-        const totalAnimationTime = (visitedNodes.length * (Constants.visitedAnimationTimeOut + speedModifier)) + (shortestPathNodes.length * (Constants.pathAnimationTimeOut + speedModifier));
+        const totalAnimationTime = (visitedNodes.length * (Constants.visitedAnimationTimeOut + speedModifier))
+            + (shortestPathNodes.length * (Constants.pathAnimationTimeOut + speedModifier));
         setTimeout(() => {
             //temp fix for A*
             let BufferRef = Rust.get_buffer_ref();
@@ -113,6 +119,9 @@ export default function PathVisualizer() {
     function handleDfs() {
         handlePathfinding(Rust.handle_dfs);
     }
+    function handleBellmanFord() {
+        handlePathfinding(Rust.handle_bellman_ford);
+    }
 
     const [algo, setAlgo] = useState(0);
     useEffect(() => {
@@ -131,6 +140,9 @@ export default function PathVisualizer() {
                 break;
             case 4:
                 setAlgoName("Greedy BFS")
+                break;
+            case 5:
+                setAlgoName("Bellman Ford")
                 break;
             default:
                 setAlgoName("Something");
@@ -155,6 +167,9 @@ export default function PathVisualizer() {
                 break;
             case 4:
                 handleGreedyBfs();
+                break;
+            case 5:
+                handleBellmanFord();
                 break;
             default:
                 break;
@@ -185,7 +200,7 @@ export default function PathVisualizer() {
                 previousNodeIdx = idx;
                 currentCellState = animationState;
                 setCellState(animationState);
-            }, i * (Constants.visitedAnimationTimeOut + speedModifier));
+            }, i * (Constants.visitedAnimationTimeOut)+ speedModifier);
         }
         if (visitedNodes.length > 0) {
             setTimeout(() => {

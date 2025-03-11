@@ -20,6 +20,6 @@ const Constants = {
     // Don't touch these unless uk what they are
     fastSpeedModifier: 0,
     normalSpeedModifier: 70,
-    slowSpeedModifier: 150,
+    slowSpeedModifier: 1500,
 }
 export default Constants
