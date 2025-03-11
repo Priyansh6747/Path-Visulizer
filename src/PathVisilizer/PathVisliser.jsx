@@ -78,7 +78,16 @@ export default function PathVisualizer() {
     }
 
     function handleAStar() {
-        handlePathfinding(Rust.handle_a_star);
+        handlePathfinding(Rust.handle_a_star());
+    }
+    function handleGreedyBfs() {
+        handlePathfinding(Rust.handle_greedy_bfs);
+    }
+    function handleBfs() {
+        handlePathfinding(Rust.handle_bfs);
+    }
+    function handleDfs() {
+        handlePathfinding(Rust.handle_dfs);
     }
 
     const [algo, setAlgo] = useState(0);
@@ -89,6 +98,15 @@ export default function PathVisualizer() {
                 break;
             case 1:
                 setAlgoName("A Star")
+                break;
+            case 2:
+                setAlgoName("DFS")
+                break;
+            case 3:
+                setAlgoName("BFS")
+                break;
+            case 4:
+                setAlgoName("Greedy BFS")
                 break;
             default:
                 setAlgoName("Something");
@@ -104,6 +122,15 @@ export default function PathVisualizer() {
                 break;
             case 1:
                 handleAStar();
+                break;
+            case 2:
+                handleDfs();
+                break;
+            case 3:
+                handleBfs();
+                break;
+            case 4:
+                handleGreedyBfs();
                 break;
             default:
                 break;

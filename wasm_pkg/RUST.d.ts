@@ -13,6 +13,9 @@ export function clear_shared_buffer(): boolean;
 export function gen_maze(start: number, end: number, cols: number): void;
 export function handle_dijkstra(start: number, end: number, rows: number, cols: number): Uint32Array;
 export function handle_a_star(start: number, end: number, rows: number, cols: number): Uint32Array;
+export function handle_greedy_bfs(start: number, end: number, rows: number, cols: number): Uint32Array;
+export function handle_bfs(start: number, end: number, rows: number, cols: number): Uint32Array;
+export function handle_dfs(start: number, end: number, rows: number, cols: number): Uint32Array;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -30,6 +33,9 @@ export interface InitOutput {
   readonly gen_maze: (a: number, b: number, c: number) => void;
   readonly handle_dijkstra: (a: number, b: number, c: number, d: number) => [number, number];
   readonly handle_a_star: (a: number, b: number, c: number, d: number) => [number, number];
+  readonly handle_greedy_bfs: (a: number, b: number, c: number, d: number) => [number, number];
+  readonly handle_bfs: (a: number, b: number, c: number, d: number) => [number, number];
+  readonly handle_dfs: (a: number, b: number, c: number, d: number) => [number, number];
   readonly create_shared_buffer: (a: number) => any;
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;

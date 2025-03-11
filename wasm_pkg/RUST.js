@@ -136,6 +136,48 @@ export function handle_a_star(start, end, rows, cols) {
     return v1;
 }
 
+/**
+ * @param {number} start
+ * @param {number} end
+ * @param {number} rows
+ * @param {number} cols
+ * @returns {Uint32Array}
+ */
+export function handle_greedy_bfs(start, end, rows, cols) {
+    const ret = wasm.handle_greedy_bfs(start, end, rows, cols);
+    var v1 = getArrayU32FromWasm0(ret[0], ret[1]).slice();
+    wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
+    return v1;
+}
+
+/**
+ * @param {number} start
+ * @param {number} end
+ * @param {number} rows
+ * @param {number} cols
+ * @returns {Uint32Array}
+ */
+export function handle_bfs(start, end, rows, cols) {
+    const ret = wasm.handle_bfs(start, end, rows, cols);
+    var v1 = getArrayU32FromWasm0(ret[0], ret[1]).slice();
+    wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
+    return v1;
+}
+
+/**
+ * @param {number} start
+ * @param {number} end
+ * @param {number} rows
+ * @param {number} cols
+ * @returns {Uint32Array}
+ */
+export function handle_dfs(start, end, rows, cols) {
+    const ret = wasm.handle_dfs(start, end, rows, cols);
+    var v1 = getArrayU32FromWasm0(ret[0], ret[1]).slice();
+    wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
+    return v1;
+}
+
 async function __wbg_load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {
