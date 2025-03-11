@@ -74,6 +74,27 @@ export function show_buffer() {
     wasm.show_buffer();
 }
 
+export function reset_non_wall_nodes() {
+    wasm.reset_non_wall_nodes();
+}
+
+/**
+ * @returns {boolean}
+ */
+export function clear_shared_buffer() {
+    const ret = wasm.clear_shared_buffer();
+    return ret !== 0;
+}
+
+/**
+ * @param {number} start
+ * @param {number} end
+ * @param {number} cols
+ */
+export function gen_maze(start, end, cols) {
+    wasm.gen_maze(start, end, cols);
+}
+
 let cachedUint32ArrayMemory0 = null;
 
 function getUint32ArrayMemory0() {
@@ -102,20 +123,17 @@ export function handle_dijkstra(start, end, rows, cols) {
 }
 
 /**
- * @returns {boolean}
- */
-export function clear_shared_buffer() {
-    const ret = wasm.clear_shared_buffer();
-    return ret !== 0;
-}
-
-/**
  * @param {number} start
  * @param {number} end
+ * @param {number} rows
  * @param {number} cols
+ * @returns {Uint32Array}
  */
-export function gen_maze(start, end, cols) {
-    wasm.gen_maze(start, end, cols);
+export function handle_a_star(start, end, rows, cols) {
+    const ret = wasm.handle_a_star(start, end, rows, cols);
+    var v1 = getArrayU32FromWasm0(ret[0], ret[1]).slice();
+    wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
+    return v1;
 }
 
 async function __wbg_load(module, imports) {

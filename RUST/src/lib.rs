@@ -1,6 +1,7 @@
 mod utils;
 mod dijkstra;
 mod maze;
+mod a_star;
 
 use wasm_bindgen::prelude::*;
 use web_sys::console;
@@ -133,55 +134,28 @@ pub fn show_buffer(){
     let s:String = v.iter().map(|i| i.to_string()).collect();
     console::log_1(&s.into());
 }
-
+fn clear_buffer(length:usize) {
+    for i in 0..length {
+        modify_from_rust(i,0);
+    }
+}
 #[wasm_bindgen]
-pub fn handle_dijkstra(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
-    let buffer = match get_buffer_as_vec() {
-        Some(data) => data,
-        None => {
-            console::error_1(&"No buffer data available".into());
-            return Vec::new();
+pub fn reset_non_wall_nodes() {
+    let v = match get_buffer_as_vec() {
+        Some(vec) => vec,
+        _none => {
+            console::log_1(&"Buffer not found".into());
+            return;
         }
     };
 
-    // Convert buffer (u8) to grid (i32)
-    let grid: Vec<i32> = buffer.iter().map(|&x| x as i32).collect();
-
-    // Calculate row and col from linear index
-    let start_row = start / cols;
-    let start_col = start % cols;
-    let end_row = end / cols;
-    let end_col = end % cols;
-
-    let (result_grid, visited_order, path_indexes) = dijkstra::find_shortest_path(
-        grid,
-        start_row,
-        start_col,
-        end_row,
-        end_col,
-        rows,
-        cols
-    );
-
-    let result_buffer: Vec<u8> = result_grid.iter().map(|&x| x as u8).collect();
-
-
-    update_shared_buffer(result_buffer);
-
-    // Return both visited order and path indexes as a combined array for JS
-    // Format: [visited_count, ...visited_indexes, path_count, ...path_indexes]
-    let mut combined = Vec::new();
-
-    // Add visited order length and indexes
-    combined.push(visited_order.len());
-    combined.extend(visited_order);
-
-    // Add path indexes length and indexes
-    combined.push(path_indexes.len());
-    combined.extend(path_indexes);
-
-    combined
+    for (idx , val) in v.iter().enumerate() {
+        if *val != 1 {
+            modify_from_rust(idx,0);
+        }
+    }
 }
+
 
 
 fn update_shared_buffer(data: Vec<u8>) {
@@ -206,11 +180,7 @@ pub fn clear_shared_buffer() -> bool {
 }
 
 
-fn clear_buffer(length:usize) {
-    for i in 0..length {
-        modify_from_rust(i,0);
-    }
-}
+
 
 #[wasm_bindgen]
 pub fn gen_maze(start: usize , end : usize, cols: usize) {
@@ -229,4 +199,58 @@ pub fn gen_maze(start: usize , end : usize, cols: usize) {
         },
         None => console::log_1(&"No Buffer found".into())
     }
+}
+
+fn process_pathfinding<F>(
+    start: usize,
+    end: usize,
+    rows: usize,
+    cols: usize,
+    algorithm: F,
+) -> Vec<usize>
+where
+    F: FnOnce(Vec<i32>, usize, usize, usize, usize, usize, usize) -> (Vec<i32>, Vec<usize>, Vec<usize>),
+{
+    let buffer = match get_buffer_as_vec() {
+        Some(data) => data,
+        None => {
+            console::error_1(&"No buffer data available".into());
+            return Vec::new();
+        }
+    };
+
+    // Convert buffer (u8) to grid (i32)
+    let grid: Vec<i32> = buffer.iter().map(|&x| x as i32).collect();
+
+    // Calculate row and col from linear index
+    let start_row = start / cols;
+    let start_col = start % cols;
+    let end_row = end / cols;
+    let end_col = end % cols;
+
+    let (result_grid, visited_order, path_indexes) = algorithm(
+        grid, start_row, start_col, end_row, end_col, rows, cols
+    );
+
+    let result_buffer: Vec<u8> = result_grid.iter().map(|&x| x as u8).collect();
+    update_shared_buffer(result_buffer);
+
+    // Return both visited order and path indexes as a combined array for JS
+    let mut combined = Vec::new();
+    combined.push(visited_order.len());
+    combined.extend(visited_order);
+    combined.push(path_indexes.len());
+    combined.extend(path_indexes);
+
+    combined
+}
+
+#[wasm_bindgen]
+pub fn handle_dijkstra(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
+    process_pathfinding(start, end, rows, cols, dijkstra::find_shortest_path)
+}
+
+#[wasm_bindgen]
+pub fn handle_a_star(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
+    process_pathfinding(start, end, rows, cols, a_star::find_shortest_path)
 }
