@@ -2,6 +2,9 @@ mod utils;
 mod dijkstra;
 mod maze;
 mod a_star;
+mod greedy_bfs;
+mod bfs;
+mod dfs;
 
 use wasm_bindgen::prelude::*;
 use web_sys::console;
@@ -253,4 +256,19 @@ pub fn handle_dijkstra(start: usize, end: usize, rows: usize, cols: usize) -> Ve
 #[wasm_bindgen]
 pub fn handle_a_star(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
     process_pathfinding(start, end, rows, cols, a_star::find_shortest_path)
+}
+
+#[wasm_bindgen]
+pub fn handle_greedy_bfs(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
+    process_pathfinding(start, end, rows, cols, greedy_bfs::find_shortest_path)
+}
+
+#[wasm_bindgen]
+pub fn handle_bfs(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
+    process_pathfinding(start, end, rows, cols, bfs::find_shortest_path)
+}
+
+#[wasm_bindgen]
+pub fn handle_dfs(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
+    process_pathfinding(start, end, rows, cols, dfs::find_shortest_path)
 }
