@@ -41,8 +41,8 @@ fn bfs(
     levels[start.0][start.1] = 0;
     visited_order.push(get_index(start.0, start.1, cols));
 
-    // Process the queue
-    while !queue.is_empty() {
+    // Process the queue until it's empty or we've visited the end
+    while !queue.is_empty() && !visited[end.0][end.1] {
         // Get next position
         let (curr_x, curr_y) = queue.pop_front().unwrap();
 

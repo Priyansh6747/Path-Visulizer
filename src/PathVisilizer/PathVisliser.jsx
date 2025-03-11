@@ -78,7 +78,7 @@ export default function PathVisualizer() {
     }
 
     function handleAStar() {
-        handlePathfinding(Rust.handle_a_star());
+        handlePathfinding(Rust.handle_a_star);
     }
     function handleGreedyBfs() {
         handlePathfinding(Rust.handle_greedy_bfs);

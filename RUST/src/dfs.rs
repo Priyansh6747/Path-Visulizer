@@ -44,9 +44,9 @@ fn dfs(
     // Track visited nodes in order
     let mut visited_order = Vec::new();
 
-    // Initialize direction vectors (left, down, right, up) - same as the reference
-    let dx: [isize; 4] = [-1, 0, 1, 0];
-    let dy: [isize; 4] = [0, 1, 0, -1];
+    // Initialize direction vectors (up, down, left, right) - changed order to prioritize up-down
+    let dx: [isize; 4] = [0, 0, -1, 1];
+    let dy: [isize; 4] = [-1, 1, 0, 0];
 
     // Initialize a stack for DFS
     let mut stack = Vec::new();

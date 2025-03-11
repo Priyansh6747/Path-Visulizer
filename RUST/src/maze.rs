@@ -135,20 +135,7 @@ impl Grid {
         self.cells.iter().map(|&wall| if wall { 1u8 } else { 0u8 }).collect()
     }
 
-    /// Print the maze - this function would typically not be used in WASM
-    #[allow(dead_code)]
-    fn print(&self) {
-        for y in 0..self.height {
-            for x in 0..self.width {
-                if self.is_wall(x, y) {
-                    print!("█");
-                } else {
-                    print!(" ");
-                }
-            }
-            println!();
-        }
-    }
+
 }
 
 /// Function to mazify a 2D grid represented as a 1D Vec<u8>
@@ -163,7 +150,7 @@ pub fn mazify(grid_data: &mut [u8], width: usize) {
     }
 }
 
-// Export functions for use in JavaScript
+// Export functions
 pub fn generate_maze(width: usize, height: usize) -> Vec<u8> {
     let mut grid = Grid::new(width, height);
     grid.generate_maze();
