@@ -50,7 +50,6 @@ export default function PathVisualizer() {
     }
 
     function handlePathfinding(algorithm) {
-        Rust.reset_non_wall_nodes();
         let currentCellState = Rust.get_buffer_copy();
         let pathData = algorithm(start, end, Rows, Columns);
 
@@ -89,7 +88,7 @@ export default function PathVisualizer() {
                 setAlgoName("Dijkstra");
                 break;
             case 1:
-                setAlgoName("A Start")
+                setAlgoName("A Star")
                 break;
             default:
                 setAlgoName("Something");
@@ -97,6 +96,8 @@ export default function PathVisualizer() {
         }
     },[algo])
     function playAlgo(){
+        setPickerActive(false);
+        Rust.reset_non_wall_nodes();
         switch (algo) {
             case 0:
                 handleDijkstra();
