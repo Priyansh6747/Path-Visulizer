@@ -122,6 +122,9 @@ export default function PathVisualizer() {
     function handleBellmanFord() {
         handlePathfinding(Rust.handle_bellman_ford);
     }
+    function hanfleBiSwarn(){
+        handlePathfinding(Rust.handle_bi_swarn);
+    }
 
     const [algo, setAlgo] = useState(0);
     useEffect(() => {
@@ -143,6 +146,9 @@ export default function PathVisualizer() {
                 break;
             case 5:
                 setAlgoName("Bellman Ford")
+                break;
+            case 6:
+                setAlgoName("Bi Swarn")
                 break;
             default:
                 setAlgoName("Something");
@@ -170,6 +176,9 @@ export default function PathVisualizer() {
                 break;
             case 5:
                 handleBellmanFord();
+                break;
+            case 6:
+                hanfleBiSwarn();
                 break;
             default:
                 break;
@@ -342,7 +351,7 @@ const StyledDiv = styled.div`
         display: flex;
         position: absolute;
         right: 0;
-        bottom: 8%;
+        bottom: 15%;
         width: auto;
         height: 5vh;
         justify-content: center;
