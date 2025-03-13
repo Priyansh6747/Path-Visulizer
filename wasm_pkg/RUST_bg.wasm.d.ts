@@ -17,6 +17,7 @@ export const handle_greedy_bfs: (a: number, b: number, c: number, d: number) => 
 export const handle_bfs: (a: number, b: number, c: number, d: number) => [number, number];
 export const handle_dfs: (a: number, b: number, c: number, d: number) => [number, number];
 export const handle_bellman_ford: (a: number, b: number, c: number, d: number) => [number, number];
+export const handle_bi_swarn: (a: number, b: number, c: number, d: number) => [number, number];
 export const create_shared_buffer: (a: number) => any;
 export const __wbindgen_export_0: WebAssembly.Table;
 export const __wbindgen_free: (a: number, b: number, c: number) => void;

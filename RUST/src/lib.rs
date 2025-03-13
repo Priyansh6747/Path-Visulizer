@@ -6,6 +6,7 @@ mod greedy_bfs;
 mod bfs;
 mod dfs;
 mod bellman_ford;
+mod bi_swarm_algorithm;
 
 use wasm_bindgen::prelude::*;
 use web_sys::console;
@@ -277,4 +278,9 @@ pub fn handle_dfs(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usi
 #[wasm_bindgen]
 pub fn handle_bellman_ford(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
     process_pathfinding(start, end, rows, cols, bellman_ford::find_shortest_path)
+}
+
+#[wasm_bindgen]
+pub fn handle_bi_swarn(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
+    process_pathfinding(start, end, rows, cols, bi_swarm_algorithm::find_shortest_path)
 }

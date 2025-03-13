@@ -52,6 +52,13 @@ const Radio = (props) => {
                     </svg>
                     Bellman Ford
                 </button>
+                <button className="value" onClick={() => handleClick(6)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path
+                            d="M21.65 7.35l-6.32 6.32-.88.88L8 15l1.45-6.66.88-.88L16.65 2.35a.5.5 0 0 1 .71.71l-6.39 6.4.88.88 6.31-6.31a.5.5 0 0 1 .71.71l-6.4 6.39.88.88 6.32-6.32a.5.5 0 0 1 .71.71z"/>
+                    </svg>
+                    Bi Swarn
+                </button>
             </div>
         </StyledWrapper>
     );
