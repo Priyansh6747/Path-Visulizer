@@ -122,39 +122,18 @@ export default function PathVisualizer() {
     function handleBellmanFord() {
         handlePathfinding(Rust.handle_bellman_ford);
     }
-    function hanfleBiSwarn(){
+    function handleBiSwarn(){
         handlePathfinding(Rust.handle_bi_swarn);
     }
 
     const [algo, setAlgo] = useState(0);
     useEffect(() => {
-        switch (algo) {
-            case 0:
-                setAlgoName("Dijkstra");
-                break;
-            case 1:
-                setAlgoName("A Star")
-                break;
-            case 2:
-                setAlgoName("DFS")
-                break;
-            case 3:
-                setAlgoName("BFS")
-                break;
-            case 4:
-                setAlgoName("Greedy BFS")
-                break;
-            case 5:
-                setAlgoName("Bellman Ford")
-                break;
-            case 6:
-                setAlgoName("Bi Swarn")
-                break;
-            default:
-                setAlgoName("Something");
-                break;
-        }
+        let algoName = ["Dijkstra","A Star","DFS","BFS","Greedy BFS","Bellman Ford","Bi Swarn"];
+        let index = algo % algoName.length;
+        setAlgoName(algoName[index]);
     },[algo])
+    
+    
     function playAlgo(){
         setPickerActive(false);
         Rust.reset_non_wall_nodes();
@@ -178,7 +157,7 @@ export default function PathVisualizer() {
                 handleBellmanFord();
                 break;
             case 6:
-                hanfleBiSwarn();
+                handleBiSwarn();
                 break;
             default:
                 break;
@@ -192,6 +171,8 @@ export default function PathVisualizer() {
     function animatePath(initialCellState, visitedNodes, pathNodes, finalState) {
         let currentCellState = new Uint8Array(initialCellState);
         let previousNodeIdx = null;
+        let currentSpeedVisited = Constants.visitedAnimationTimeOut + speedModifier;
+        let currentSpeedShortest = Constants.pathAnimationTimeOut + speedModifier;
 
         // Animate visited nodes first
         for (let i = 0; i < visitedNodes.length; i++) {
@@ -209,7 +190,7 @@ export default function PathVisualizer() {
                 previousNodeIdx = idx;
                 currentCellState = animationState;
                 setCellState(animationState);
-            }, i * (Constants.visitedAnimationTimeOut)+ speedModifier);
+            }, i * currentSpeedVisited);
         }
         if (visitedNodes.length > 0) {
             setTimeout(() => {
@@ -218,7 +199,7 @@ export default function PathVisualizer() {
                 animationState[lastIdx] = 2;
                 currentCellState = animationState;
                 setCellState(animationState);
-            }, visitedNodes.length * (Constants.visitedAnimationTimeOut + speedModifier));
+            }, visitedNodes.length * currentSpeedVisited);
         }
 
         // Then animate shortest path nodes
@@ -236,8 +217,8 @@ export default function PathVisualizer() {
                 previousPathIdx = idx;
                 currentCellState = animationState;
                 setCellState(animationState);
-            }, (visitedNodes.length * (Constants.visitedAnimationTimeOut + speedModifier)) +
-                (i * (Constants.pathAnimationTimeOut + speedModifier)));
+            }, (visitedNodes.length * currentSpeedVisited) +
+                (i * currentSpeedShortest));
         }
 
         // Set the final path node to state 3 after all path animations
@@ -248,8 +229,8 @@ export default function PathVisualizer() {
                 animationState[lastIdx] = 3;
                 currentCellState = animationState;
                 setCellState(animationState);
-            }, (visitedNodes.length * (Constants.visitedAnimationTimeOut + speedModifier)) +
-                (pathNodes.length * (Constants.pathAnimationTimeOut + speedModifier)));
+            }, (visitedNodes.length * currentSpeedVisited) +
+                (pathNodes.length * currentSpeedShortest));
         }
     }
 

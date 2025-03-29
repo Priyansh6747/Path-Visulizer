@@ -12,14 +12,15 @@ const Constants = {
     visitingNodeColor: '#ffd200',
 
     //Bigger values means slower animation speed
-    //note don't go below 20 cause js just slow as shit
+    //note don't go below 20 cause js .....
     //didn't test how low it can get, but probably it can't get a lot lower
     visitedAnimationTimeOut: 20,
     pathAnimationTimeOut: 50,
 
-    // Don't touch these unless uk what they are
+    // Modifiers to change the speed
+    // higher value means slower speed
     fastSpeedModifier: 0,
-    normalSpeedModifier: 70,
-    slowSpeedModifier: 1500,
+    normalSpeedModifier: 100,
+    slowSpeedModifier: 200,
 }
 export default Constants
