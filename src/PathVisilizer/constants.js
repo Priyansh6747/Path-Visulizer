@@ -14,8 +14,8 @@ const Constants = {
     //Bigger values means slower animation speed
     //note don't go below 20 cause js .....
     //didn't test how low it can get, but probably it can't get a lot lower
-    visitedAnimationTimeOut: 20,
-    pathAnimationTimeOut: 50,
+    visitedAnimationTimeOut: 7,
+    pathAnimationTimeOut: 30,
 
     // Modifiers to change the speed
     // higher value means slower speed

@@ -13,6 +13,7 @@ const Radio = (props) => {
                 <button className="value" onClick={() => handleClick(0)}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path
+                            fill="white"
                             d="M12 2C6.48 2 2 6.48 2 12c0 4.42 3.58 8 8 8s8-3.58 8-8c0-5.52-4.48-10-8-10zm0 14c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm-1-9h2v4h-2v-4zm0 6h2v2h-2v-2z"/>
                     </svg>
                     Dijkstra
@@ -20,6 +21,7 @@ const Radio = (props) => {
                 <button className="value" onClick={() => handleClick(1)}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path
+                            fill="white"
                             d="M12 2L2 7v12l10 5 10-5V7l-10-5zm0 3.27L18.18 8 12 10.73 5.82 8 12 5.27zm0 13.46l-8-4v-4.73L12 17l8-4.73v4l-8 4z"/>
                     </svg>
                     A Star
@@ -27,6 +29,7 @@ const Radio = (props) => {
                 <button className="value" onClick={() => handleClick(2)}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path
+                            fill="white"
                             d="M21.65 7.35l-6.32 6.32-.88.88L8 15l1.45-6.66.88-.88L16.65 2.35a.5.5 0 0 1 .71.71l-6.39 6.4.88.88 6.31-6.31a.5.5 0 0 1 .71.71l-6.4 6.39.88.88 6.32-6.32a.5.5 0 0 1 .71.71z"/>
                     </svg>
                     DFS
@@ -34,6 +37,7 @@ const Radio = (props) => {
                 <button className="value" onClick={() => handleClick(3)}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path
+                            fill="white"
                             d="M21.65 7.35l-6.32 6.32-.88.88L8 15l1.45-6.66.88-.88L16.65 2.35a.5.5 0 0 1 .71.71l-6.39 6.4.88.88 6.31-6.31a.5.5 0 0 1 .71.71l-6.4 6.39.88.88 6.32-6.32a.5.5 0 0 1 .71.71z"/>
                     </svg>
                     BFS
@@ -41,6 +45,7 @@ const Radio = (props) => {
                 <button className="value" onClick={() => handleClick(4)}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path
+                            fill="white"
                             d="M21.65 7.35l-6.32 6.32-.88.88L8 15l1.45-6.66.88-.88L16.65 2.35a.5.5 0 0 1 .71.71l-6.39 6.4.88.88 6.31-6.31a.5.5 0 0 1 .71.71l-6.4 6.39.88.88 6.32-6.32a.5.5 0 0 1 .71.71z"/>
                     </svg>
                     Greedy BFS
@@ -48,6 +53,7 @@ const Radio = (props) => {
                 <button className="value" onClick={() => handleClick(5)}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path
+                            fill="white"
                             d="M21.65 7.35l-6.32 6.32-.88.88L8 15l1.45-6.66.88-.88L16.65 2.35a.5.5 0 0 1 .71.71l-6.39 6.4.88.88 6.31-6.31a.5.5 0 0 1 .71.71l-6.4 6.39.88.88 6.32-6.32a.5.5 0 0 1 .71.71z"/>
                     </svg>
                     Bellman Ford
@@ -55,6 +61,7 @@ const Radio = (props) => {
                 <button className="value" onClick={() => handleClick(6)}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path
+                            fill="white"
                             d="M21.65 7.35l-6.32 6.32-.88.88L8 15l1.45-6.66.88-.88L16.65 2.35a.5.5 0 0 1 .71.71l-6.39 6.4.88.88 6.31-6.31a.5.5 0 0 1 .71.71l-6.4 6.39.88.88 6.32-6.32a.5.5 0 0 1 .71.71z"/>
                     </svg>
                     Bi Swarn

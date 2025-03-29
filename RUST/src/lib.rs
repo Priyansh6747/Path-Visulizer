@@ -191,8 +191,8 @@ pub fn clear_shared_buffer() -> bool {
 pub fn gen_maze(start: usize , end : usize, cols: usize) {
     let mut grid;
     match get_buffer_as_vec() {
-        Some(V) => {
-            grid = V;
+        Some(v) => {
+            grid = v;
             maze::mazify(&mut grid, cols);
             for (idx , val) in grid.iter().enumerate() {
                 if idx == start || idx == end {
@@ -284,3 +284,67 @@ pub fn handle_bellman_ford(start: usize, end: usize, rows: usize, cols: usize) -
 pub fn handle_bi_swarn(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
     process_pathfinding(start, end, rows, cols, bi_swarm_algorithm::find_shortest_path)
 }
+
+#[inline(always)]
+pub fn benchmark_one<F>(
+    start: usize,
+    end: usize,
+    rows: usize,
+    cols: usize,
+    algorithm: F,
+) -> usize
+where
+    F: FnOnce(Vec<i32>, usize, usize, usize, usize, usize, usize) -> (Vec<i32>, Vec<usize>, Vec<usize>) {
+    let buffer = match get_buffer_as_vec() {
+        Some(data) => data,
+        None => {
+            console::error_1(&"No buffer data available".into());
+            return 0usize;
+        }
+    };
+
+    // Convert buffer (u8) to grid (i32)
+    let grid: Vec<i32> = buffer.iter().map(|&x| x as i32).collect();
+
+    // Calculate row and col from linear index
+    let start_row = start / cols;
+    let start_col = start % cols;
+    let end_row = end / cols;
+    let end_col = end % cols;
+
+    let (_result_grid, visited_order, _path_indexes) = algorithm(
+        grid, start_row, start_col, end_row, end_col, rows, cols
+    );
+
+    visited_order.len()
+}
+
+#[wasm_bindgen]
+pub fn benchmark_dijkstra(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,dijkstra::find_shortest_path)
+}
+#[wasm_bindgen]
+pub fn benchmark_a_star(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,a_star::find_shortest_path)
+}
+pub fn benchmark_greedy_bfs(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,greedy_bfs::find_shortest_path)
+}
+
+#[wasm_bindgen]
+pub fn bfs(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,bfs::find_shortest_path)
+}
+#[wasm_bindgen]
+pub fn dfs(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,dfs::find_shortest_path)
+}
+#[wasm_bindgen]
+pub fn bellman_ford(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,bellman_ford::find_shortest_path)
+}
+#[wasm_bindgen]
+pub fn bi_swarn(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,bi_swarm_algorithm::find_shortest_path)
+}
+

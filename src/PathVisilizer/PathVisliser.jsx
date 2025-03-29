@@ -66,7 +66,6 @@ export default function PathVisualizer() {
     function setWall(idx,flag) {
         if (!cellState || idx >= Rows * Columns) {return}
         cellState[idx] = flag;
-        Rust.show_buffer();
     }
 
     function mazify() {
@@ -304,7 +303,7 @@ const StyledDiv = styled.div`
         justify-content: center;
         align-items: center;
         z-index: 99;
-        opacity: 0.2;
+        opacity: 0.4;
         transition: 0.2s ease-out;
     },
     .NavContainer:hover{

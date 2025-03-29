@@ -18,6 +18,12 @@ export function handle_bfs(start: number, end: number, rows: number, cols: numbe
 export function handle_dfs(start: number, end: number, rows: number, cols: number): Uint32Array;
 export function handle_bellman_ford(start: number, end: number, rows: number, cols: number): Uint32Array;
 export function handle_bi_swarn(start: number, end: number, rows: number, cols: number): Uint32Array;
+export function benchmark_dijkstra(start: number, end: number, rows: number, cols: number): number;
+export function benchmark_a_star(start: number, end: number, rows: number, cols: number): number;
+export function bfs(start: number, end: number, rows: number, cols: number): number;
+export function dfs(start: number, end: number, rows: number, cols: number): number;
+export function bellman_ford(start: number, end: number, rows: number, cols: number): number;
+export function bi_swarn(start: number, end: number, rows: number, cols: number): number;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -40,6 +46,12 @@ export interface InitOutput {
   readonly handle_dfs: (a: number, b: number, c: number, d: number) => [number, number];
   readonly handle_bellman_ford: (a: number, b: number, c: number, d: number) => [number, number];
   readonly handle_bi_swarn: (a: number, b: number, c: number, d: number) => [number, number];
+  readonly benchmark_dijkstra: (a: number, b: number, c: number, d: number) => number;
+  readonly benchmark_a_star: (a: number, b: number, c: number, d: number) => number;
+  readonly bfs: (a: number, b: number, c: number, d: number) => number;
+  readonly dfs: (a: number, b: number, c: number, d: number) => number;
+  readonly bellman_ford: (a: number, b: number, c: number, d: number) => number;
+  readonly bi_swarn: (a: number, b: number, c: number, d: number) => number;
   readonly create_shared_buffer: (a: number) => any;
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;
