@@ -36,10 +36,6 @@ export default function PathVisualizer() {
                 return "SLOW";
         }
     }
-    useEffect(() => {
-        console.log("Speed modifier changed to:", speedModifier);
-        console.log("Speed changed " + getSpeedName());
-    }, [speedModifier]);
 
     function toggleSpeed() {
         const speedOrder = [
@@ -62,7 +58,7 @@ export default function PathVisualizer() {
             setCellState(buffer);
             setInitialized(true);
         }
-        initialize().then(()=>console.log("Initializing..."));
+        initialize().then(()=>console.log("Initialized"));
     }, []);
 
     //Function to toggle a node into wall
@@ -132,35 +128,22 @@ export default function PathVisualizer() {
         let index = algo % algoName.length;
         setAlgoName(algoName[index]);
     },[algo])
-    
-    
-    function playAlgo(){
+
+
+    function playAlgo() {
         setPickerActive(false);
         Rust.reset_non_wall_nodes();
-        switch (algo) {
-            case 0:
-                handleDijkstra();
-                break;
-            case 1:
-                handleAStar();
-                break;
-            case 2:
-                handleDfs();
-                break;
-            case 3:
-                handleBfs();
-                break;
-            case 4:
-                handleGreedyBfs();
-                break;
-            case 5:
-                handleBellmanFord();
-                break;
-            case 6:
-                handleBiSwarn();
-                break;
-            default:
-                break;
+        const algoFunctions = [
+            handleDijkstra,
+            handleAStar,
+            handleDfs,
+            handleBfs,
+            handleGreedyBfs,
+            handleBellmanFord,
+            handleBiSwarn
+        ];
+        if (algo >= 0 && algo < algoFunctions.length) {
+            algoFunctions[algo]();
         }
     }
 

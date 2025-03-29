@@ -20,7 +20,7 @@ const Constants = {
     // Modifiers to change the speed
     // higher value means slower speed
     fastSpeedModifier: 0,
-    normalSpeedModifier: 100,
-    slowSpeedModifier: 200,
+    normalSpeedModifier: 50,
+    slowSpeedModifier: 100,
 }
 export default Constants
