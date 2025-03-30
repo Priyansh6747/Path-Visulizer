@@ -206,6 +206,89 @@ export function handle_bi_swarn(start, end, rows, cols) {
     return v1;
 }
 
+/**
+ * @param {number} start
+ * @param {number} end
+ * @param {number} rows
+ * @param {number} cols
+ * @returns {number}
+ */
+export function benchmark_dijkstra(start, end, rows, cols) {
+    const ret = wasm.benchmark_dijkstra(start, end, rows, cols);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} start
+ * @param {number} end
+ * @param {number} rows
+ * @param {number} cols
+ * @returns {number}
+ */
+export function benchmark_a_star(start, end, rows, cols) {
+    const ret = wasm.benchmark_a_star(start, end, rows, cols);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} start
+ * @param {number} end
+ * @param {number} rows
+ * @param {number} cols
+ * @returns {number}
+ */
+export function bfs(start, end, rows, cols) {
+    const ret = wasm.bfs(start, end, rows, cols);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} start
+ * @param {number} end
+ * @param {number} rows
+ * @param {number} cols
+ * @returns {number}
+ */
+export function dfs(start, end, rows, cols) {
+    const ret = wasm.dfs(start, end, rows, cols);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} start
+ * @param {number} end
+ * @param {number} rows
+ * @param {number} cols
+ * @returns {number}
+ */
+export function bellman_ford(start, end, rows, cols) {
+    const ret = wasm.bellman_ford(start, end, rows, cols);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} start
+ * @param {number} end
+ * @param {number} rows
+ * @param {number} cols
+ * @returns {number}
+ */
+export function bi_swarn(start, end, rows, cols) {
+    const ret = wasm.bi_swarn(start, end, rows, cols);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} start
+ * @param {number} end
+ * @param {number} rows
+ * @param {number} cols
+ * @param {number} algo
+ */
+export function update_grid_for_algo(start, end, rows, cols, algo) {
+    wasm.update_grid_for_algo(start, end, rows, cols, algo);
+}
+
 async function __wbg_load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {

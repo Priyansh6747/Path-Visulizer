@@ -25,6 +25,8 @@ export default function PathVisualizer() {
     const [AlgoName, setAlgoName] = useState("Dijkstra");
     const [pickerActive, setPickerActive] = useState(false);
     const [speedModifier, setSpeedModifier] = useState(Constants.fastSpeedModifier);
+    const [dragMode, setDragMode] = useState(null); // start/end/null
+    const [isPlayed, setisPlayed] = useState(false);//to track if the animation is isPlayed or not
 
     function getSpeedName() {
         switch(speedModifier) {
@@ -36,10 +38,6 @@ export default function PathVisualizer() {
                 return "SLOW";
         }
     }
-    useEffect(() => {
-        console.log("Speed modifier changed to:", speedModifier);
-        console.log("Speed changed " + getSpeedName());
-    }, [speedModifier]);
 
     function toggleSpeed() {
         const speedOrder = [
@@ -51,7 +49,6 @@ export default function PathVisualizer() {
         const currentIndex = speedOrder.indexOf(speedModifier);
         const nextIndex = (currentIndex + 1) % speedOrder.length;
         setSpeedModifier(speedOrder[nextIndex]);
-
     }
 
     //Global initialization for rust
@@ -62,19 +59,38 @@ export default function PathVisualizer() {
             setCellState(buffer);
             setInitialized(true);
         }
-        initialize().then(()=>console.log("Initializing..."));
+        initialize().then(()=>console.log("Initialized"));
     }, []);
 
     //Function to toggle a node into wall
     // flag 1 means set state 1 flag 0 means set state 0
-    function setWall(idx,flag) {
+    function setWall(idx, flag) {
         if (!cellState || idx >= Rows * Columns) {return}
+        if (idx === start || idx === end) {return}
         cellState[idx] = flag;
-        Rust.show_buffer();
     }
 
+    // Handle node dragging
+    function handleNodeDrag(idx) {
+        if (dragMode === 'start' && idx !== end) {
+            setStart(idx);
+            const originalState = cellState[idx];
+            if (originalState === 1) {
+                cellState[idx] = 0;
+            }
+        } else if (dragMode === 'end' && idx !== start) {
+            setEnd(idx);
+            const originalState = cellState[idx];
+            if (originalState === 1) {
+                cellState[idx] = 0;
+            }
+        }
+    }
+
+
     function mazify() {
-        Rust.gen_maze(start ,end, Columns);
+        Rust.gen_maze(start, end, Columns);
+        setisPlayed(false);
         refreshCells();
     }
 
@@ -94,11 +110,6 @@ export default function PathVisualizer() {
         const totalAnimationTime = (visitedNodes.length * (Constants.visitedAnimationTimeOut + speedModifier))
             + (shortestPathNodes.length * (Constants.pathAnimationTimeOut + speedModifier));
         setTimeout(() => {
-            //temp fix for A*
-            let BufferRef = Rust.get_buffer_ref();
-            for (let i = 0; i < cellState.length; i++) {
-                BufferRef[i] = finalCellState[i];
-            }
             setCellState(Rust.get_buffer_ref());
         }, totalAnimationTime + 50); // a small buffer
     }
@@ -132,39 +143,25 @@ export default function PathVisualizer() {
         let index = algo % algoName.length;
         setAlgoName(algoName[index]);
     },[algo])
-    
-    
-    function playAlgo(){
+
+
+    function playAlgo() {
         setPickerActive(false);
         Rust.reset_non_wall_nodes();
-        switch (algo) {
-            case 0:
-                handleDijkstra();
-                break;
-            case 1:
-                handleAStar();
-                break;
-            case 2:
-                handleDfs();
-                break;
-            case 3:
-                handleBfs();
-                break;
-            case 4:
-                handleGreedyBfs();
-                break;
-            case 5:
-                handleBellmanFord();
-                break;
-            case 6:
-                handleBiSwarn();
-                break;
-            default:
-                break;
+        setisPlayed(true);
+        const algoFunctions = [
+            handleDijkstra,
+            handleAStar,
+            handleDfs,
+            handleBfs,
+            handleGreedyBfs,
+            handleBellmanFord,
+            handleBiSwarn
+        ];
+        if (algo >= 0 && algo < algoFunctions.length) {
+            algoFunctions[algo]();
         }
     }
-
-
 
     //Default function to handle update animation
     //Does not account for CSS animation
@@ -234,17 +231,12 @@ export default function PathVisualizer() {
         }
     }
 
-
-
-
-
     // get random indexes for start and end
     const idxes = getTwoUniqueRandomNumbers(Rows * Columns - 1);
-    const [start, setStart] = useState(idxes[0]); 
+    const [start, setStart] = useState(idxes[0]);
     const [end, setEnd] = useState(idxes[1]);
 
     //Creating the Grid
-
     const [cellsArray, setCellsArray] = useState([]);
 
     // Use useEffect to handle the grid initialization
@@ -252,7 +244,15 @@ export default function PathVisualizer() {
         if (initialized) {
             renderGrid();
         }
-    }, [initialized, cellState, start, end, mouseDown]);
+    }, [initialized, cellState, start, end, mouseDown, dragMode]);
+
+    useEffect(() => {
+        if (initialized && isPlayed) {
+            Rust.update_grid_for_algo(start,end,Rows,Columns,algo);
+            refreshCells();
+        }
+
+    },[start, end])
 
     const renderGrid = () => {
         let cells = [];
@@ -269,6 +269,9 @@ export default function PathVisualizer() {
                     isEnd={currentCellIdx === end}
                     mouseIsPressed={mouseDown}
                     onMouseDown={setMouseDown}
+                    dragMode={dragMode}
+                    setDragMode={setDragMode}
+                    handleNodeDrag={handleNodeDrag}
                 />
                 cells.push(cell);
             }
@@ -292,6 +295,7 @@ export default function PathVisualizer() {
                         speed = {getSpeedName}
                         maze={mazify}
                         refresh={refreshCells}
+                        setisPlayed={setisPlayed}
                     />
                 </div>
                 {pickerActive? (<div className="algoPicker">
@@ -309,7 +313,6 @@ export default function PathVisualizer() {
     );
 }
 
-
 //styling
 const StyledDiv = styled.div`
     .NavContainer {
@@ -321,7 +324,7 @@ const StyledDiv = styled.div`
         justify-content: center;
         align-items: center;
         z-index: 99;
-        opacity: 0.2;
+        opacity: 0.4;
         transition: 0.2s ease-out;
     },
     .NavContainer:hover{

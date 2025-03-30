@@ -1,4 +1,4 @@
-﻿import React, {useState} from 'react';
+﻿import React from 'react';
 import styled from 'styled-components';
 import PropTypes from "prop-types";
 import {startRust} from "./../../HelperFunctions.js"
@@ -9,6 +9,7 @@ const Radio = (props) => {
         await startRust();
         clear_shared_buffer();
         props.refresh();
+        props.setisPlayed(false);
     }
 
     function handleClick(e){
@@ -62,6 +63,7 @@ Radio.PropTypes = {
     speed: PropTypes.func.isRequired,
     maze: PropTypes.func.isRequired,
     refresh: PropTypes.func.isRequired,
+    setisPlayed: PropTypes.func.isRequired,
 }
 
 const StyledWrapper = styled.div`
@@ -72,7 +74,7 @@ const StyledWrapper = styled.div`
         background-color: #0d1117;
         justify-content: center;
         border-radius: 5px;
-        gap: 7.5px;
+        gap: 8px;
     }
 
     .value {

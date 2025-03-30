@@ -191,8 +191,8 @@ pub fn clear_shared_buffer() -> bool {
 pub fn gen_maze(start: usize , end : usize, cols: usize) {
     let mut grid;
     match get_buffer_as_vec() {
-        Some(V) => {
-            grid = V;
+        Some(v) => {
+            grid = v;
             maze::mazify(&mut grid, cols);
             for (idx , val) in grid.iter().enumerate() {
                 if idx == start || idx == end {
@@ -257,7 +257,18 @@ pub fn handle_dijkstra(start: usize, end: usize, rows: usize, cols: usize) -> Ve
 
 #[wasm_bindgen]
 pub fn handle_a_star(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
-    process_pathfinding(start, end, rows, cols, a_star::find_shortest_path)
+    let ret = process_pathfinding(start, end, rows, cols, a_star::find_shortest_path);
+    reset_non_wall_nodes();
+    let no_of_visited = ret[0];
+    for i in 1..=no_of_visited {
+        modify_from_rust(ret[i], 2);
+    }
+    let no_of_path_nodes = ret[no_of_visited+1];
+    let path_start_idx = no_of_visited+2;
+    for i in 0..no_of_path_nodes {
+        modify_from_rust(ret[path_start_idx + i], 3);
+    }
+    ret
 }
 
 #[wasm_bindgen]
@@ -283,4 +294,82 @@ pub fn handle_bellman_ford(start: usize, end: usize, rows: usize, cols: usize) -
 #[wasm_bindgen]
 pub fn handle_bi_swarn(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
     process_pathfinding(start, end, rows, cols, bi_swarm_algorithm::find_shortest_path)
+}
+
+#[inline(always)]
+pub fn benchmark_one<F>(
+    start: usize,
+    end: usize,
+    rows: usize,
+    cols: usize,
+    algorithm: F,
+) -> usize
+where
+    F: FnOnce(Vec<i32>, usize, usize, usize, usize, usize, usize) -> (Vec<i32>, Vec<usize>, Vec<usize>) {
+    let buffer = match get_buffer_as_vec() {
+        Some(data) => data,
+        None => {
+            console::error_1(&"No buffer data available".into());
+            return 0usize;
+        }
+    };
+
+    // Convert buffer (u8) to grid (i32)
+    let grid: Vec<i32> = buffer.iter().map(|&x| x as i32).collect();
+
+    // Calculate row and col from linear index
+    let start_row = start / cols;
+    let start_col = start % cols;
+    let end_row = end / cols;
+    let end_col = end % cols;
+
+    let (_result_grid, visited_order, _path_indexes) = algorithm(
+        grid, start_row, start_col, end_row, end_col, rows, cols
+    );
+
+    visited_order.len()
+}
+
+#[wasm_bindgen]
+pub fn benchmark_dijkstra(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,dijkstra::find_shortest_path)
+}
+#[wasm_bindgen]
+pub fn benchmark_a_star(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,a_star::find_shortest_path)
+}
+pub fn benchmark_greedy_bfs(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,greedy_bfs::find_shortest_path)
+}
+
+#[wasm_bindgen]
+pub fn bfs(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,bfs::find_shortest_path)
+}
+#[wasm_bindgen]
+pub fn dfs(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,dfs::find_shortest_path)
+}
+#[wasm_bindgen]
+pub fn bellman_ford(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,bellman_ford::find_shortest_path)
+}
+#[wasm_bindgen]
+pub fn bi_swarn(start: usize, end: usize, rows: usize, cols: usize) -> usize {
+    benchmark_one(start,end,rows,cols,bi_swarm_algorithm::find_shortest_path)
+}
+
+#[wasm_bindgen]
+pub fn update_grid_for_algo(start: usize, end: usize, rows: usize, cols: usize, algo: usize) {
+    reset_non_wall_nodes();
+    match algo {
+        0 => _= handle_dijkstra(start,end,rows,cols),
+        1 => _= handle_a_star(start,end,rows,cols),
+        2 => _= handle_dfs(start,end,rows,cols),
+        3 => _= handle_bfs(start,end,rows,cols),
+        4 => _= handle_greedy_bfs(start,end,rows,cols),
+        5 => _= handle_bellman_ford(start,end,rows,cols),
+        6 => _= handle_bi_swarn(start,end,rows,cols),
+        _ => console::error_1(&"Unknown algorithm specified".into())
+    }
 }
