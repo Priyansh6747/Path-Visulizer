@@ -7,25 +7,15 @@ export default function Node(props) {
     const [color, setColor] = useState('transparent');
 
     useEffect(() => {
-        switch (props.stateValue) {
-            case 0:
-                setColor(Constants.DefaultNodeColor);
-                break;
-            case 1:
-                setColor(Constants.WallNodeColor);
-                break;
-            case 2:
-                setColor(Constants.VisitedNodeColor);
-                break;
-            case 3:
-                setColor(Constants.ShortestNodeColor);
-                break;
-            case 4:
-                setColor(Constants.visitingNodeColor);
-                break;
-            default:
-                break;
-        }
+        const colors = [
+            Constants.DefaultNodeColor,
+            Constants.WallNodeColor,
+            Constants.VisitedNodeColor,
+            Constants.ShortestNodeColor,
+            Constants.visitingNodeColor
+        ];
+        const colorIndex = props.stateValue % colors.length;
+        setColor(colors[colorIndex]);
     }, [props.stateValue]);
 
     function MakeWall() {
