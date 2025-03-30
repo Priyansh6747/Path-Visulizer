@@ -257,7 +257,18 @@ pub fn handle_dijkstra(start: usize, end: usize, rows: usize, cols: usize) -> Ve
 
 #[wasm_bindgen]
 pub fn handle_a_star(start: usize, end: usize, rows: usize, cols: usize) -> Vec<usize> {
-    process_pathfinding(start, end, rows, cols, a_star::find_shortest_path)
+    let ret = process_pathfinding(start, end, rows, cols, a_star::find_shortest_path);
+    reset_non_wall_nodes();
+    let no_of_visited = ret[0];
+    for i in 1..=no_of_visited {
+        modify_from_rust(ret[i], 2);
+    }
+    let no_of_path_nodes = ret[no_of_visited+1];
+    let path_start_idx = no_of_visited+2;
+    for i in 0..no_of_path_nodes {
+        modify_from_rust(ret[path_start_idx + i], 3);
+    }
+    ret
 }
 
 #[wasm_bindgen]
@@ -354,10 +365,11 @@ pub fn update_grid_for_algo(start: usize, end: usize, rows: usize, cols: usize, 
     match algo {
         0 => _= handle_dijkstra(start,end,rows,cols),
         1 => _= handle_a_star(start,end,rows,cols),
-        2 => _= handle_greedy_bfs(start,end,rows,cols),
+        2 => _= handle_dfs(start,end,rows,cols),
         3 => _= handle_bfs(start,end,rows,cols),
-        4 => _= handle_dfs(start,end,rows,cols),
+        4 => _= handle_greedy_bfs(start,end,rows,cols),
         5 => _= handle_bellman_ford(start,end,rows,cols),
+        6 => _= handle_bi_swarn(start,end,rows,cols),
         _ => console::error_1(&"Unknown algorithm specified".into())
     }
 }

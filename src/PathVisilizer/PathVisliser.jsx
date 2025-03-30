@@ -26,6 +26,7 @@ export default function PathVisualizer() {
     const [pickerActive, setPickerActive] = useState(false);
     const [speedModifier, setSpeedModifier] = useState(Constants.fastSpeedModifier);
     const [dragMode, setDragMode] = useState(null); // start/end/null
+    const [isPlayed, setisPlayed] = useState(false);//to track if the animation is isPlayed or not
 
     function getSpeedName() {
         switch(speedModifier) {
@@ -89,6 +90,7 @@ export default function PathVisualizer() {
 
     function mazify() {
         Rust.gen_maze(start, end, Columns);
+        setisPlayed(false);
         refreshCells();
     }
 
@@ -108,11 +110,6 @@ export default function PathVisualizer() {
         const totalAnimationTime = (visitedNodes.length * (Constants.visitedAnimationTimeOut + speedModifier))
             + (shortestPathNodes.length * (Constants.pathAnimationTimeOut + speedModifier));
         setTimeout(() => {
-            //temp fix for A*
-            let BufferRef = Rust.get_buffer_ref();
-            for (let i = 0; i < cellState.length; i++) {
-                BufferRef[i] = finalCellState[i];
-            }
             setCellState(Rust.get_buffer_ref());
         }, totalAnimationTime + 50); // a small buffer
     }
@@ -151,6 +148,7 @@ export default function PathVisualizer() {
     function playAlgo() {
         setPickerActive(false);
         Rust.reset_non_wall_nodes();
+        setisPlayed(true);
         const algoFunctions = [
             handleDijkstra,
             handleAStar,
@@ -249,7 +247,7 @@ export default function PathVisualizer() {
     }, [initialized, cellState, start, end, mouseDown, dragMode]);
 
     useEffect(() => {
-        if (initialized) {
+        if (initialized && isPlayed) {
             Rust.update_grid_for_algo(start,end,Rows,Columns,algo);
             refreshCells();
         }
@@ -297,6 +295,7 @@ export default function PathVisualizer() {
                         speed = {getSpeedName}
                         maze={mazify}
                         refresh={refreshCells}
+                        setisPlayed={setisPlayed}
                     />
                 </div>
                 {pickerActive? (<div className="algoPicker">
