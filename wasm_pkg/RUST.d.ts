@@ -24,6 +24,7 @@ export function bfs(start: number, end: number, rows: number, cols: number): num
 export function dfs(start: number, end: number, rows: number, cols: number): number;
 export function bellman_ford(start: number, end: number, rows: number, cols: number): number;
 export function bi_swarn(start: number, end: number, rows: number, cols: number): number;
+export function update_grid_for_algo(start: number, end: number, rows: number, cols: number, algo: number): void;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -52,6 +53,7 @@ export interface InitOutput {
   readonly dfs: (a: number, b: number, c: number, d: number) => number;
   readonly bellman_ford: (a: number, b: number, c: number, d: number) => number;
   readonly bi_swarn: (a: number, b: number, c: number, d: number) => number;
+  readonly update_grid_for_algo: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly create_shared_buffer: (a: number) => any;
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;

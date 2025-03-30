@@ -278,6 +278,17 @@ export function bi_swarn(start, end, rows, cols) {
     return ret >>> 0;
 }
 
+/**
+ * @param {number} start
+ * @param {number} end
+ * @param {number} rows
+ * @param {number} cols
+ * @param {number} algo
+ */
+export function update_grid_for_algo(start, end, rows, cols, algo) {
+    wasm.update_grid_for_algo(start, end, rows, cols, algo);
+}
+
 async function __wbg_load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {

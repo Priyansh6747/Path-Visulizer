@@ -25,6 +25,7 @@ export default function PathVisualizer() {
     const [AlgoName, setAlgoName] = useState("Dijkstra");
     const [pickerActive, setPickerActive] = useState(false);
     const [speedModifier, setSpeedModifier] = useState(Constants.fastSpeedModifier);
+    const [dragMode, setDragMode] = useState(null); // start/end/null
 
     function getSpeedName() {
         switch(speedModifier) {
@@ -47,7 +48,6 @@ export default function PathVisualizer() {
         const currentIndex = speedOrder.indexOf(speedModifier);
         const nextIndex = (currentIndex + 1) % speedOrder.length;
         setSpeedModifier(speedOrder[nextIndex]);
-
     }
 
     //Global initialization for rust
@@ -63,13 +63,32 @@ export default function PathVisualizer() {
 
     //Function to toggle a node into wall
     // flag 1 means set state 1 flag 0 means set state 0
-    function setWall(idx,flag) {
+    function setWall(idx, flag) {
         if (!cellState || idx >= Rows * Columns) {return}
+        if (idx === start || idx === end) {return}
         cellState[idx] = flag;
     }
 
+    // Handle node dragging
+    function handleNodeDrag(idx) {
+        if (dragMode === 'start' && idx !== end) {
+            setStart(idx);
+            const originalState = cellState[idx];
+            if (originalState === 1) {
+                cellState[idx] = 0;
+            }
+        } else if (dragMode === 'end' && idx !== start) {
+            setEnd(idx);
+            const originalState = cellState[idx];
+            if (originalState === 1) {
+                cellState[idx] = 0;
+            }
+        }
+    }
+
+
     function mazify() {
-        Rust.gen_maze(start ,end, Columns);
+        Rust.gen_maze(start, end, Columns);
         refreshCells();
     }
 
@@ -146,8 +165,6 @@ export default function PathVisualizer() {
         }
     }
 
-
-
     //Default function to handle update animation
     //Does not account for CSS animation
     function animatePath(initialCellState, visitedNodes, pathNodes, finalState) {
@@ -216,17 +233,12 @@ export default function PathVisualizer() {
         }
     }
 
-
-
-
-
     // get random indexes for start and end
     const idxes = getTwoUniqueRandomNumbers(Rows * Columns - 1);
-    const [start, setStart] = useState(idxes[0]); 
+    const [start, setStart] = useState(idxes[0]);
     const [end, setEnd] = useState(idxes[1]);
 
     //Creating the Grid
-
     const [cellsArray, setCellsArray] = useState([]);
 
     // Use useEffect to handle the grid initialization
@@ -234,7 +246,15 @@ export default function PathVisualizer() {
         if (initialized) {
             renderGrid();
         }
-    }, [initialized, cellState, start, end, mouseDown]);
+    }, [initialized, cellState, start, end, mouseDown, dragMode]);
+
+    useEffect(() => {
+        if (initialized) {
+            Rust.update_grid_for_algo(start,end,Rows,Columns,algo);
+            refreshCells();
+        }
+
+    },[start, end])
 
     const renderGrid = () => {
         let cells = [];
@@ -251,6 +271,9 @@ export default function PathVisualizer() {
                     isEnd={currentCellIdx === end}
                     mouseIsPressed={mouseDown}
                     onMouseDown={setMouseDown}
+                    dragMode={dragMode}
+                    setDragMode={setDragMode}
+                    handleNodeDrag={handleNodeDrag}
                 />
                 cells.push(cell);
             }
@@ -290,7 +313,6 @@ export default function PathVisualizer() {
         </>
     );
 }
-
 
 //styling
 const StyledDiv = styled.div`

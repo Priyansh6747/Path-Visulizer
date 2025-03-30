@@ -19,29 +19,58 @@ export default function Node(props) {
     }, [props.stateValue]);
 
     function MakeWall() {
-        if (props.isStart || props.isEnd) {return}
+        if (props.dragMode !== null) return;
+        if (props.isStart || props.isEnd) return;
         props.setWall(props.idx, (props.stateValue === 1) ? 0 : 1);
         setColor((color === Constants.WallNodeColor) ? Constants.DefaultNodeColor : Constants.WallNodeColor);
     }
 
+    function handleMouseDown() {
+        if (props.isStart)
+            props.setDragMode('start');
+        else if (props.isEnd)
+            props.setDragMode('end');
+        else
+            MakeWall();
+        props.onMouseDown(true);
+    }
+
+    function handleMouseUp() {
+        if (props.dragMode !== null) {
+            props.setDragMode(null);
+        }
+        props.onMouseDown(false);
+    }
+
+    function handleMouseEnter() {
+        if (props.mouseIsPressed && props.dragMode !== null)
+            props.handleNodeDrag(props.idx);
+        else if (props.mouseIsPressed && props.dragMode === null)
+            MakeWall();
+    }
+
+    // cursor style
+    const getCursorStyle = () => {
+        if (props.dragMode !== null) {
+            return 'grabbing';
+        } else if (props.isStart || props.isEnd) {
+            return 'grab';
+        }
+        return 'default';
+    };
+
     return (
         <StyledWrapper>
             <div
-                className="box"
-                style={{ backgroundColor: color }}
+                className={`box ${props.dragMode !== null ? 'dragging' : ''}`}
+                style={{
+                    backgroundColor: color,
+                    cursor: getCursorStyle()
+                }}
                 onClick={MakeWall}
-                onMouseDown={() => {
-                    MakeWall();
-                    props.onMouseDown(true);
-                }}
-                onMouseUp={() => {
-                    props.onMouseDown(false);
-                }}
-                onMouseEnter={() => {
-                    if (props.mouseIsPressed) {
-                        MakeWall();
-                    }
-                }}
+                onMouseDown={handleMouseDown}
+                onMouseUp={handleMouseUp}
+                onMouseEnter={handleMouseEnter}
             >
                 {props.isEnd && <span className="node-symbol end-symbol">E</span>}
                 {props.isStart && <span className="node-symbol start-symbol">S</span>}
@@ -58,6 +87,9 @@ Node.propTypes = {
     isStart: PropTypes.bool.isRequired,
     mouseIsPressed: PropTypes.bool.isRequired,
     onMouseDown: PropTypes.func.isRequired,
+    dragMode: PropTypes.string,
+    setDragMode: PropTypes.func.isRequired,
+    handleNodeDrag: PropTypes.func.isRequired
 };
 
 const StyledWrapper = styled.div`
