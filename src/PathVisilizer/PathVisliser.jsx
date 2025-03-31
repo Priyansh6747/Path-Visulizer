@@ -94,6 +94,30 @@ export default function PathVisualizer() {
         refreshCells();
     }
 
+//disable mouse when animating
+    let [isAnimating, setIsAnimating] = useState(false);
+ /*   useEffect(() => {
+        console.log("Animation "+ isAnimating.toString());
+        const preventMouseEvents = (e) => {
+            if (isAnimating) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log(e);
+                return false;
+            }
+        };
+        document.addEventListener('click', preventMouseEvents, true);
+        document.addEventListener('mousedown', preventMouseEvents, true);
+        document.addEventListener('mouseup', preventMouseEvents, true);
+        return () => {
+            document.removeEventListener('click', preventMouseEvents, true);
+            document.removeEventListener('mousedown', preventMouseEvents, true);
+            document.removeEventListener('mouseup', preventMouseEvents, true);
+        };
+    },[isAnimating]);
+
+*/
+    //template function to run algo
     function handlePathfinding(algorithm) {
         let currentCellState = Rust.get_buffer_copy();
         let pathData = algorithm(start, end, Rows, Columns);
@@ -103,6 +127,7 @@ export default function PathVisualizer() {
         const visitedNodes = pathData.slice(1, noOfVisitedNodes + 1);
         const noOfShortestPathNodes = pathData[noOfVisitedNodes + 1];
         const shortestPathNodes = pathData.slice(noOfVisitedNodes + 2, noOfVisitedNodes + 2 + noOfShortestPathNodes);
+        setIsAnimating(true);
 
         const finalCellState = new Uint8Array(currentCellState);
         animatePath(currentCellState, visitedNodes, shortestPathNodes, finalCellState);
@@ -111,6 +136,7 @@ export default function PathVisualizer() {
             + (shortestPathNodes.length * (Constants.pathAnimationTimeOut + speedModifier));
         setTimeout(() => {
             setCellState(Rust.get_buffer_ref());
+            setIsAnimating(false);
         }, totalAnimationTime + 50); // a small buffer
     }
 
@@ -308,6 +334,23 @@ export default function PathVisualizer() {
                         cellsArray
                     )}
                 </div>
+                {isAnimating && (
+                    <div
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            zIndex: 9999,
+                            cursor: 'not-allowed'
+                        }}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }}
+                    />
+                )}
             </StyledDiv>
         </>
     );
