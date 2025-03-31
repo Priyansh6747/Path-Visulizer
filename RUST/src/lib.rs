@@ -373,3 +373,66 @@ pub fn update_grid_for_algo(start: usize, end: usize, rows: usize, cols: usize, 
         _ => console::error_1(&"Unknown algorithm specified".into())
     }
 }
+
+
+
+/// * `algo_index` - Integer (0-6) representing the algorithm:
+///   * 0: Dijkstra
+///   * 1: A Star
+///   * 2: DFS
+///   * 3: BFS
+///   * 4: Greedy BFS
+///   * 5: Bellman Ford
+///   * 6: Bi Swarm
+/// * `execution_time_ms` - Execution time in milliseconds
+#[wasm_bindgen]
+pub fn calculate_maze_algorithm_cost(algo_index: usize, execution_time_ms: f64,
+                                     visited_nodes: usize, total_nodes: usize) -> f64 {
+    let cost_per_node = execution_time_ms / visited_nodes as f64;
+    let scaling_factor = match algo_index {
+        0 => { // Dijkstra: O((V+E) log V)
+            let v = total_nodes as f64;
+            let e = 4.0 * v;
+            (v + e) * v.log2()
+        },
+        1 => { // A Star: O((V+E) log V) but usually more efficient than Dijkstra
+            let v = total_nodes as f64;
+            let e = 4.0 * v;
+            (v + e) * v.log2() * 0.8
+        },
+        2 => { // DFS: O(V+E)
+            let v = total_nodes as f64;
+            let e = 4.0 * v;
+            v + e
+        },
+        3 => { // BFS: O(V+E)
+            let v = total_nodes as f64;
+            let e = 4.0 * v;
+            v + e
+        },
+        4 => {
+            let v = total_nodes as f64;
+            let e = 4.0 * v;
+            (v + e) * v.log2() * 0.7
+        },
+        5 => { // Bellman Ford: O(V*E)
+            let v = total_nodes as f64;
+            let e = 4.0 * v;
+            v * e
+        },
+        6 => { // Bi Swarm: Bidirectional BFS with O(b^(d/2)) where b is branching factor and d is path length
+            let v = total_nodes as f64;
+            let e = 4.0 * v;
+            (v + e).sqrt() * 2.0
+        },
+        _ => {
+            let v = total_nodes as f64;
+            let e = 4.0 * v;
+            v + e
+        }
+    };
+
+    let efficiency_ratio = visited_nodes as f64 / total_nodes as f64;
+    let total_cost = cost_per_node * efficiency_ratio * scaling_factor;
+    total_cost
+}

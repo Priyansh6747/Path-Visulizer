@@ -25,6 +25,18 @@ export function dfs(start: number, end: number, rows: number, cols: number): num
 export function bellman_ford(start: number, end: number, rows: number, cols: number): number;
 export function bi_swarn(start: number, end: number, rows: number, cols: number): number;
 export function update_grid_for_algo(start: number, end: number, rows: number, cols: number, algo: number): void;
+/**
+ * * `algo_index` - Integer (0-6) representing the algorithm:
+ *   * 0: Dijkstra
+ *   * 1: A Star
+ *   * 2: DFS
+ *   * 3: BFS
+ *   * 4: Greedy BFS
+ *   * 5: Bellman Ford
+ *   * 6: Bi Swarm
+ * * `execution_time_ms` - Execution time in milliseconds
+ */
+export function calculate_maze_algorithm_cost(algo_index: number, execution_time_ms: number, visited_nodes: number, total_nodes: number): number;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
@@ -54,6 +66,7 @@ export interface InitOutput {
   readonly bellman_ford: (a: number, b: number, c: number, d: number) => number;
   readonly bi_swarn: (a: number, b: number, c: number, d: number) => number;
   readonly update_grid_for_algo: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly calculate_maze_algorithm_cost: (a: number, b: number, c: number, d: number) => number;
   readonly create_shared_buffer: (a: number) => any;
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;

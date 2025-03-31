@@ -94,33 +94,15 @@ export default function PathVisualizer() {
         refreshCells();
     }
 
-//disable mouse when animating
+    //disable mouse when animating
     let [isAnimating, setIsAnimating] = useState(false);
- /*   useEffect(() => {
-        console.log("Animation "+ isAnimating.toString());
-        const preventMouseEvents = (e) => {
-            if (isAnimating) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log(e);
-                return false;
-            }
-        };
-        document.addEventListener('click', preventMouseEvents, true);
-        document.addEventListener('mousedown', preventMouseEvents, true);
-        document.addEventListener('mouseup', preventMouseEvents, true);
-        return () => {
-            document.removeEventListener('click', preventMouseEvents, true);
-            document.removeEventListener('mousedown', preventMouseEvents, true);
-            document.removeEventListener('mouseup', preventMouseEvents, true);
-        };
-    },[isAnimating]);
-
-*/
     //template function to run algo
     function handlePathfinding(algorithm) {
         let currentCellState = Rust.get_buffer_copy();
+        const st = performance.now();
         let pathData = algorithm(start, end, Rows, Columns);
+        const en = performance.now();
+        console.log(en-st);
 
         // Parse the path data based on the format [noOfVisitedNodes, idx, idx, ..., noOfNodesInShortestPath, idx, idx, ...]
         const noOfVisitedNodes = pathData[0];
