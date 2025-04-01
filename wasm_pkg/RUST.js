@@ -289,6 +289,43 @@ export function update_grid_for_algo(start, end, rows, cols, algo) {
     wasm.update_grid_for_algo(start, end, rows, cols, algo);
 }
 
+/**
+ * * `algo_index` - Integer (0-6) representing the algorithm:
+ *   * 0: Dijkstra
+ *   * 1: A Star
+ *   * 2: DFS
+ *   * 3: BFS
+ *   * 4: Greedy BFS
+ *   * 5: Bellman Ford
+ *   * 6: Bi Swarm
+ * * `execution_time_ms` - Execution time in milliseconds
+ * @param {number} algo_index
+ * @param {number} execution_time_ms
+ * @param {number} visited_nodes
+ * @param {number} total_nodes
+ * @returns {number}
+ */
+export function calculate_maze_algorithm_cost(algo_index, execution_time_ms, visited_nodes, total_nodes) {
+    const ret = wasm.calculate_maze_algorithm_cost(algo_index, execution_time_ms, visited_nodes, total_nodes);
+    return ret;
+}
+
+/**
+ * @returns {number}
+ */
+export function get_visited_nodes() {
+    const ret = wasm.get_visited_nodes();
+    return ret >>> 0;
+}
+
+/**
+ * @returns {number}
+ */
+export function get_visited_percentage() {
+    const ret = wasm.get_visited_percentage();
+    return ret;
+}
+
 async function __wbg_load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {
