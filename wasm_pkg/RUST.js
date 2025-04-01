@@ -310,6 +310,22 @@ export function calculate_maze_algorithm_cost(algo_index, execution_time_ms, vis
     return ret;
 }
 
+/**
+ * @returns {number}
+ */
+export function get_visited_nodes() {
+    const ret = wasm.get_visited_nodes();
+    return ret >>> 0;
+}
+
+/**
+ * @returns {number}
+ */
+export function get_visited_percentage() {
+    const ret = wasm.get_visited_percentage();
+    return ret;
+}
+
 async function __wbg_load(module, imports) {
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {

@@ -12,6 +12,7 @@ import AlgoPicker from "./Components/Card.jsx"
 
 //import Rust
 import * as Rust from "../../wasm_pkg/RUST.js"
+import Benchmark from "./Components/Benchmark.jsx";
 
 // Set no of rows and columns that would fit the screen
 const Columns = Math.floor(window.innerWidth / Constants.nodeWidth);
@@ -150,8 +151,17 @@ export default function PathVisualizer() {
         let algoName = ["Dijkstra","A Star","DFS","BFS","Greedy BFS","Bellman Ford","Bi Swarn"];
         let index = algo % algoName.length;
         setAlgoName(algoName[index]);
+        if (initialized) {
+            Rust.reset_non_wall_nodes();
+            refreshCells();
+            setisPlayed(false);
+        }
     },[algo])
 
+    function GetComplexity() {
+        let complexity = ["O((V+E)logV)","O(E)","O(V+E)","O(V+E)","O(E)","O(VE),O(VlogV)"];
+        return complexity[algo%complexity.length];
+    }
 
     function playAlgo() {
         setPickerActive(false);
@@ -309,6 +319,14 @@ export default function PathVisualizer() {
                 {pickerActive? (<div className="algoPicker">
                     <AlgoPicker changeFlag={setAlgo} Enable = {setPickerActive} />
                 </div>): null}
+                {(isPlayed && !isAnimating)? (
+                    <div className="Benchmark"><Benchmark
+                        AlgoName={AlgoName}
+                        visited = {Rust.get_visited_nodes()}
+                        percentage = {Rust.get_visited_percentage()}
+                        complexity = {GetComplexity()}
+                    /></div>
+                ):null}
                 <div className="gridContainer">
                     {!initialized ? (
                         <div className="Loading"><Loading/></div>
@@ -372,6 +390,24 @@ const StyledDiv = styled.div`
     .algoPicker:hover{
         transition: 0.2s ease-in;
         opacity: 1;
+    },
+    .Benchmark{
+    display: flex;
+    position: absolute;
+    right: 0;
+    top: 2%;
+    width: auto;
+    height: 5vh;
+    justify-content: center;
+    align-items: center;
+    z-index: 99;
+    opacity: 0.8;
+    transition: 0.2s ease-out;
+    },
+    .benchmark:hover{
+    transition: 0.2s ease-in;
+    opacity: 0.1;
+    z-index: -9;
     },
     .gridContainer {
         background-color: ${Constants.BackgroundColor};

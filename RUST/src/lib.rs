@@ -13,7 +13,7 @@ use web_sys::console;
 use js_sys;
 use std::cell::RefCell;
 use std::rc::Rc;
-
+use web_sys::console::count;
 
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
@@ -432,7 +432,50 @@ pub fn calculate_maze_algorithm_cost(algo_index: usize, execution_time_ms: f64,
         }
     };
 
-    let efficiency_ratio = visited_nodes as f64 / total_nodes as f64;
-    let total_cost = cost_per_node * efficiency_ratio * scaling_factor;
-    total_cost
+    let visited_percentage = visited_nodes as f64 / total_nodes as f64;
+    let time_component = cost_per_node * scaling_factor * 0.3;
+    let visit_component = visited_percentage * scaling_factor * 0.7;
+    let base_cost = time_component + visit_component;
+
+    let shortest_path_multiplier = match algo_index {
+        0 | 1 | 3 | 5 => 1.0,
+        2 => 1.5,
+        4 => 1.3,
+        6 => 1.1,
+        _ => 1.2,
+    };
+
+    base_cost * shortest_path_multiplier
 }
+
+#[wasm_bindgen]
+pub fn get_visited_nodes() -> usize {
+    let buffer = get_buffer_as_vec().unwrap();
+    let mut count = 0usize;
+    for i in buffer {
+        if i == 2 || i== 3 {
+            count += 1;
+        }
+    }
+    count
+}
+
+#[wasm_bindgen]
+pub fn get_visited_percentage() -> f64 {
+    let buffer = get_buffer_as_vec().unwrap();
+    let mut visited = 0usize;
+    let mut non_wall_count = 0usize;
+    for i in buffer {
+        if i == 2 || i == 3 {
+            visited += 1;
+        }
+        if i != 1 {
+            non_wall_count += 1;
+        }
+    }
+    if non_wall_count == 0 {
+        return 0.0;
+    }
+    (visited as f64 / non_wall_count as f64) * 100.0
+}
+
