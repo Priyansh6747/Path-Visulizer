@@ -28,6 +28,7 @@ export default function PathVisualizer() {
     const [speedModifier, setSpeedModifier] = useState(Constants.fastSpeedModifier);
     const [dragMode, setDragMode] = useState(null); // start/end/null
     const [isPlayed, setisPlayed] = useState(false);//to track if the animation is isPlayed or not
+    const [previousWallPositions, setPreviousWallPositions] = useState([]); // Track previous wall positions
 
     function getSpeedName() {
         switch(speedModifier) {
@@ -71,23 +72,30 @@ export default function PathVisualizer() {
         cellState[idx] = flag;
     }
 
-    // Handle node dragging
+    // Handle node dragging with wall preservation
     function handleNodeDrag(idx) {
         if (dragMode === 'start' && idx !== end) {
+            if (cellState[idx] === 1) {
+                setPreviousWallPositions(prev => [...prev, idx]);
+                cellState[idx] = 0;
+            }
+            if (previousWallPositions.includes(start)) {
+                cellState[start] = 1;
+                setPreviousWallPositions(prev => prev.filter(pos => pos !== start));
+            }
             setStart(idx);
-            const originalState = cellState[idx];
-            if (originalState === 1) {
-                cellState[idx] = 0;
-            }
         } else if (dragMode === 'end' && idx !== start) {
-            setEnd(idx);
-            const originalState = cellState[idx];
-            if (originalState === 1) {
+            if (cellState[idx] === 1) {
+                setPreviousWallPositions(prev => [...prev, idx]);
                 cellState[idx] = 0;
             }
+            if (previousWallPositions.includes(end)) {
+                cellState[end] = 1;
+                setPreviousWallPositions(prev => prev.filter(pos => pos !== end));
+            }
+            setEnd(idx);
         }
     }
-
 
     function mazify() {
         Rust.gen_maze(start, end, Columns);
@@ -307,24 +315,24 @@ export default function PathVisualizer() {
                 <div className="NavContainer">
                     <Nav
                         handlePlay={playAlgo}
-                        AlgoName = {AlgoName}
-                        EnablePicker = {setPickerActive}
-                        toggleSpeed = {toggleSpeed}
-                        speed = {getSpeedName}
+                        AlgoName={AlgoName}
+                        EnablePicker={setPickerActive}
+                        toggleSpeed={toggleSpeed}
+                        speed={getSpeedName}
                         maze={mazify}
                         refresh={refreshCells}
                         setisPlayed={setisPlayed}
                     />
                 </div>
                 {pickerActive? (<div className="algoPicker">
-                    <AlgoPicker changeFlag={setAlgo} Enable = {setPickerActive} />
+                    <AlgoPicker changeFlag={setAlgo} Enable={setPickerActive} />
                 </div>): null}
                 {(isPlayed && !isAnimating)? (
                     <div className="Benchmark"><Benchmark
                         AlgoName={AlgoName}
-                        visited = {Rust.get_visited_nodes()}
-                        percentage = {Rust.get_visited_percentage()}
-                        complexity = {GetComplexity()}
+                        visited={Rust.get_visited_nodes()}
+                        percentage={Rust.get_visited_percentage()}
+                        complexity={GetComplexity()}
                     /></div>
                 ):null}
                 <div className="gridContainer">
