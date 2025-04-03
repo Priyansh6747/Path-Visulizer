@@ -10,7 +10,7 @@ export function get_buffer_copy(): Uint8Array;
 export function show_buffer(): void;
 export function reset_non_wall_nodes(): void;
 export function clear_shared_buffer(): boolean;
-export function gen_maze(start: number, end: number, cols: number): void;
+export function gen_maze(start: number, end: number, cols: number): Uint8Array;
 export function handle_dijkstra(start: number, end: number, rows: number, cols: number): Uint32Array;
 export function handle_a_star(start: number, end: number, rows: number, cols: number): Uint32Array;
 export function handle_greedy_bfs(start: number, end: number, rows: number, cols: number): Uint32Array;
@@ -53,7 +53,7 @@ export interface InitOutput {
   readonly show_buffer: () => void;
   readonly reset_non_wall_nodes: () => void;
   readonly clear_shared_buffer: () => number;
-  readonly gen_maze: (a: number, b: number, c: number) => void;
+  readonly gen_maze: (a: number, b: number, c: number) => any;
   readonly handle_dijkstra: (a: number, b: number, c: number, d: number) => [number, number];
   readonly handle_a_star: (a: number, b: number, c: number, d: number) => [number, number];
   readonly handle_greedy_bfs: (a: number, b: number, c: number, d: number) => [number, number];
