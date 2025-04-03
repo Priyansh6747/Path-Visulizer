@@ -188,7 +188,7 @@ pub fn clear_shared_buffer() -> bool {
 
 
 #[wasm_bindgen]
-pub fn gen_maze(start: usize , end : usize, cols: usize) {
+pub fn gen_maze(start: usize , end : usize, cols: usize) -> js_sys::Uint8Array {
     let mut grid;
     match get_buffer_as_vec() {
         Some(v) => {
@@ -204,6 +204,7 @@ pub fn gen_maze(start: usize , end : usize, cols: usize) {
         },
         None => console::log_1(&"No Buffer found".into())
     }
+    get_buffer_copy()
 }
 
 fn process_pathfinding<F>(

@@ -1,8 +1,8 @@
 ﻿//import modules
 import styled from "styled-components";
 import Constants from "./constants.js";
-import {getTwoUniqueRandomNumbers , startRust} from "../HelperFunctions.js";
-import {useState , useEffect} from "react";
+import {getTwoUniqueRandomNumbers, startRust} from "../HelperFunctions.js";
+import {useEffect, useState} from "react";
 
 //import Components
 import Node from "./Node.jsx";
@@ -97,10 +97,41 @@ export default function PathVisualizer() {
         }
     }
 
+
+    function animateMazeGeneration() {
+        const wallGrid = new Uint8Array(cellState.length).fill(1);
+        wallGrid[start] = 0;
+        wallGrid[end] = 0;
+        setCellState(wallGrid);
+        const storedFinalMaze = Rust.gen_maze(start, end, Columns);
+
+        const rowSize = Columns;
+        const numRows = cellState.length / rowSize;
+        const animationState = new Uint8Array(wallGrid);
+
+        for (let row = 0; row < numRows; row++) {
+            setTimeout(() => {
+                for (let col = 0; col < rowSize; col++) {
+                    const idx = row * rowSize + col;
+                    animationState[idx] = storedFinalMaze[idx];
+                }
+                setCellState(new Uint8Array(animationState));
+
+                if (row === numRows - 1) {
+                    setTimeout(() => {
+                        setCellState(storedFinalMaze);
+                        //refreshCells();
+                    }, Constants.mazeGenerationTimeOut);
+                }
+            }, row * Constants.mazeGenerationTimeOut);
+        }
+    }
+
     function mazify() {
-        Rust.gen_maze(start, end, Columns);
+        setIsAnimating(true);
+        animateMazeGeneration();
         setisPlayed(false);
-        refreshCells();
+        setIsAnimating(false);
     }
 
     //disable mouse when animating

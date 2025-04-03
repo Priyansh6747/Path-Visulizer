@@ -90,9 +90,11 @@ export function clear_shared_buffer() {
  * @param {number} start
  * @param {number} end
  * @param {number} cols
+ * @returns {Uint8Array}
  */
 export function gen_maze(start, end, cols) {
-    wasm.gen_maze(start, end, cols);
+    const ret = wasm.gen_maze(start, end, cols);
+    return ret;
 }
 
 let cachedUint32ArrayMemory0 = null;
