@@ -198,7 +198,7 @@ export default function PathVisualizer() {
     },[algo])
 
     function GetComplexity() {
-        let complexity = ["O((V+E)logV)","O(E)","O(V+E)","O(V+E)","O(E)","O(VE),O(VlogV)"];
+        let complexity = ["O((V+E)logV)","O(E)","O(V+E)","O(V+E)","O(E)","O(VE)","O(VlogV)"];
         return complexity[algo%complexity.length];
     }
 
