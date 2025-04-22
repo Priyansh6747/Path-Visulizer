@@ -53,6 +53,9 @@ This directory contains the core Rust implementation of various pathfinding algo
     - Provides various **utility functions** and helper methods used across multiple modules in the project.
     - These utility functions handle common operations like grid manipulation, performance optimizations, and data formatting, which reduce redundancy in the main algorithm files.
 
+
+**`Memory Sharing`** 
+is achieved by creating a shared buffer. A thread is then locked to ensure safe access, enabling it to modify and interact with the grid efficiently.
 ---
 
 Each of these files plays a vital role in building the core functionality of the **Path Visualizer**. The Rust logic is responsible for handling the computational-heavy tasks, providing a smooth and fast experience for visualizing pathfinding algorithms directly in the browser. For more details, check out the [repository root](https://github.com/Priyansh6747/Path-Visulizer).
